@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../../context/AppContext.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
+
 export default function MatchCard({ match, context }) {
   const { respondToMatch, getUserById } = useApp();
   const { user } = useAuth();

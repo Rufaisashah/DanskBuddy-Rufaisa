@@ -1,7 +1,5 @@
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
-
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
 export async function translateMessage(text) {
   const prompt = `Detect the language of this text. If it's Danish, translate to English. If it's English, translate to Danish. Return only the translated text, nothing else. Text: "${text}"`;
 
