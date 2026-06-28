@@ -27,8 +27,8 @@ export function AppProvider({ children }) {
   const [matches, setMatches] = useState(() => getMatches());
   const [messages, setMessages] = useState(() => getMessages());
   const [posts, setPosts] = useState(() => getPosts());
+  const [readTimestamps, setReadTimestamps] = useState({});
 
-  // Keep localStorage in sync whenever state changes
   useEffect(() => {
     saveUsers(users);
   }, [users]);
@@ -54,14 +54,6 @@ export function AppProvider({ children }) {
 
   // ── User helpers ────────────────────────────────────────────────────────────
 
-  /**
-
-- registerUser(userData)
-- IMPORTANT: caller must hash the password BEFORE passing it in.
-- Use hashPassword() from AuthContext:
-- const hashed = await hashPassword(password);
-- registerUser({ ...data, password: hashed });
-*/
   const registerUser = useCallback((userData) => {
     const newUser = {
       id: generateId(),
@@ -165,6 +157,12 @@ export function AppProvider({ children }) {
     },
     [messages, buildConversationId]
   );
+  const markAsRead = useCallback((conversationId) => {
+    setReadTimestamps((prev) => ({
+      ...prev,
+      [conversationId]: Date.now(),
+    }));
+  }, []);
 
   // ── Post helpers ────────────────────────────────────────────────────────────
 
@@ -208,7 +206,6 @@ export function AppProvider({ children }) {
     [posts]
   );
 
-  // ── Wrap AuthProvider here so it can receive onUpdateUser callback ──────────
   return (
     <AppContext.Provider
       value={{
@@ -227,6 +224,8 @@ export function AppProvider({ children }) {
         buildConversationId,
         sendMessage,
         getConversation,
+        markAsRead,
+        readTimestamps,
         createPost,
         toggleLike,
         deletePost,
