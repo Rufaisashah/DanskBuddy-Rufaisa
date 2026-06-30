@@ -10,14 +10,12 @@ export type User = {
   email?: string;
   name: string;
   avatar?: string;
-  avatarBgColor?: string;
-  age?: number;
   city?: string;
   role?: UserRole;
-  danishLevel?: DanishLevel;
+  danishLevel?: string;
   nativeLanguage?: string;
-  learningGoals?: string;
-  interests?: string[];
+  learningGoals?: string[];
+  topics?: string[];
   availability?: string[];
   bio?: string;
   createdAt?: string;
