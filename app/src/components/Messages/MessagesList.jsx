@@ -1,22 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import Avatar from "../Shared/Avatar";
 import { avatarColor } from "../../utils/avatarColor";
-
-function formatTime(dateStr) {
-  if (!dateStr) return "";
-  const date = new Date(dateStr);
-  const diffDays = Math.floor((Date.now() - date.getTime()) / 86400000);
-  if (diffDays === 0)
-    return date.toLocaleTimeString("da-DK", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  if (diffDays === 1) return "I går";
-  if (diffDays < 7)
-    return date.toLocaleDateString("da-DK", { weekday: "short" });
-  return date.toLocaleDateString("da-DK", { day: "numeric", month: "short" });
-}
-
+import { formatMessageTime } from "../../utils/formatMessageTime";
+import { getInitials } from "../../utils/getInitials";
 export default function MessagesList({ conversations, currentUserId }) {
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -38,12 +24,7 @@ export default function MessagesList({ conversations, currentUserId }) {
               ${isActive ? "bg-primary-light" : "hover:bg-surface"}`}
           >
             <Avatar
-              initials={conv.otherUser.name
-                .split(" ")
-                .map((p) => p[0])
-                .join("")
-                .slice(0, 2)
-                .toUpperCase()}
+              initials={getInitials(conv.otherUser.name)}
               online={true}
               size="md"
               color={avatarColor(conv.otherUser.id)}
@@ -56,7 +37,7 @@ export default function MessagesList({ conversations, currentUserId }) {
                   {conv.otherUser.name}
                 </p>
                 <span className="text-[0.7rem] text-neutral ml-2 shrink-0">
-                  {formatTime(conv.lastMessageAt)}
+                  {formatMessageTime(conv.lastMessageAt)}
                 </span>
               </div>
               <p className="m-0 text-[0.8rem] text-neutral truncate">

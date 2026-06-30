@@ -7,7 +7,7 @@ import Avatar from "../Shared/Avatar";
 import { Phone, Video } from "lucide-react";
 import "./Messages.css";
 import { avatarColor } from "../../utils/avatarColor";
-
+import { getInitials } from "../../utils/getInitials";
 export default function ChatWindow() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -60,12 +60,7 @@ export default function ChatWindow() {
         </button>
 
         <Avatar
-          initials={otherUser.name
-            .split(" ")
-            .map((p) => p[0])
-            .join("")
-            .slice(0, 2)
-            .toUpperCase()}
+          initials={getInitials(otherUser.name)}
           online={true}
           size="lg"
           color={avatarColor(otherUser.id)}
