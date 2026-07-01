@@ -26,7 +26,7 @@ function getRoleLabel(role: User["role"]) {
     return "Not added yet";
   }
 
-  if (role === "native") {
+  if (role.value === "native") {
     return "Native speaker";
   }
 

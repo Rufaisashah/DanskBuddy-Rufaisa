@@ -7,7 +7,6 @@ import type { ProfileCardUser } from "../ProfileCard/ProfileCard";
 import EmptyState from "../Shared/EmptyState";
 import StyledDropdown, { type SelectOption } from "../Shared/StyledDropdown";
 import type { User } from "../../types/types";
-import { Search } from "lucide-react";
 
 type SendMatchResult =
   | {
@@ -44,53 +43,39 @@ type Match = {
   createdAt: string;
 };
 
-const cityAllOption = {
+const allOption: SelectOption = {
   value: "all",
-  label: "By",
-  menuLabel: "Vis alle",
+  label: "All",
 };
 
-const roleAllOption = {
-  value: "all",
-  label: "Hvem vil du møde?",
-  menuLabel: "Vis alle",
-};
-
-const danishLevelAllOption = {
-  value: "all",
-  label: "Danskniveau",
-  menuLabel: "Vis alle",
-};
-
-const availabilityAllOption = {
-  value: "all",
-  label: "Tilgængelighed",
-  menuLabel: "Vis alle",
-};
-
-const roleOptions = [
-  roleAllOption,
-  { value: "learner", label: "Lærer dansk" },
-  { value: "native", label: "Taler dansk" },
+const roleOptions: SelectOption[] = [
+  allOption,
+  { value: "learner", label: "Learner" },
+  { value: "native", label: "Native speaker" },
+  { value: "both", label: "Both" },
 ];
 
-const danishLevelOptions = [
-  danishLevelAllOption,
-  { value: "a1", label: "A1" },
-  { value: "a2", label: "A2" },
-  { value: "b1", label: "B1" },
-  { value: "b2", label: "B2" },
-  { value: "c1", label: "C1" },
-  { value: "c2", label: "C2" },
+const danishLevelOptions: SelectOption[] = [
+  allOption,
+  { value: "beginner", label: "Beginner" },
+  { value: "intermediate", label: "Intermediate" },
+  { value: "advanced", label: "Advanced" },
+  { value: "native", label: "Native" },
 ];
 
-const availabilityOptions = [
-  availabilityAllOption,
+const availabilityOptions: SelectOption[] = [
+  allOption,
   { value: "mornings", label: "Mornings" },
   { value: "evenings", label: "Evenings" },
   { value: "weekends", label: "Weekends" },
   { value: "flexible", label: "Flexible" },
 ];
+
+const labelClass =
+  "block text-[12px] font-extrabold tracking-[-0.01em] text-[#6E665C]";
+
+const inputClass =
+  "mt-2 w-full rounded-2xl border border-[#ECE6DD] bg-white px-4 py-3.5 text-[15px] font-semibold text-[#2B2A28] outline-none transition placeholder:text-[#A89F94] focus:border-[#E63946] focus:ring-4 focus:ring-[#FDEAEC]";
 
 function getCityOptions(users: User[]): SelectOption[] {
   const cities = users
@@ -100,7 +85,7 @@ function getCityOptions(users: User[]): SelectOption[] {
   const uniqueCities = Array.from(new Set(cities)).sort();
 
   return [
-    cityAllOption,
+    allOption,
     ...uniqueCities.map((city) => ({
       value: city,
       label: city,
@@ -124,13 +109,13 @@ function matchesSearch(user: User, searchTerm: string) {
   }
 
   const name = user.name.toLowerCase();
-  const interests = user.interests ?? [];
+  const topics = user.interests ?? [];
 
-  const interestsMatches = interests.some((interests) =>
-    interests.toLowerCase().includes(normalizedSearch)
+  const topicMatches = topics.some((topic) =>
+    topic.toLowerCase().includes(normalizedSearch)
   );
 
-  return name.includes(normalizedSearch) || interestsMatches;
+  return name.includes(normalizedSearch) || topicMatches;
 }
 
 function matchesFilter(userValue: string | undefined, selectedValue: string) {
@@ -162,7 +147,7 @@ function toProfileCardUser(user: User): ProfileCardUser {
     name: user.name,
     avatar: user.avatar ?? "",
     city: user.city ?? "Unknown city",
-    role: user.role ?? "learner",
+    role: user.role?.value ?? "learner",
     danishLevel: user.danishLevel ?? "Not selected",
     interests: user.interests ?? [],
     bio: user.bio ?? "No bio yet.",
@@ -186,27 +171,27 @@ function findMatchBetweenUsers(
 function getConnectButtonState(match: Match | undefined) {
   if (!match) {
     return {
-      label: "Opret forbindelse",
+      label: "Connect",
       disabled: false,
     };
   }
 
   if (match.status === "pending") {
     return {
-      label: "Afventer",
+      label: "Pending",
       disabled: true,
     };
   }
 
   if (match.status === "accepted") {
     return {
-      label: "Forbundet",
+      label: "Connected",
       disabled: true,
     };
   }
 
   return {
-    label: "Opret forbindelse",
+    label: "Connect",
     disabled: false,
   };
 }
@@ -236,7 +221,7 @@ function BrowsePage() {
     return availableUsers.filter((profileUser) => {
       const searchMatches = matchesSearch(profileUser, searchTerm);
       const cityMatches = matchesFilter(profileUser.city, cityFilter);
-      const roleMatches = matchesFilter(profileUser.role, roleFilter);
+      const roleMatches = matchesFilter(profileUser.role?.value, roleFilter);
       const danishLevelMatches = matchesFilter(
         profileUser.danishLevel,
         danishLevelFilter
@@ -305,111 +290,115 @@ function BrowsePage() {
   }
 
   return (
-    <main className="-m-8 min-h-[calc(100vh-8rem)] bg-background font-sans">
-      <section
-        aria-label="Search and filter"
-        className="relative z-20 w-full overflow-visible border-b border-surface bg-white px-4 py-4 sm:px-6 lg:px-8"
-      >
-        <div className="relative mx-auto w-full max-w-7xl overflow-visible">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.02em] text-[#161616]">
-              Hvem vil du møde?
-            </h1>
+    <main className="-m-8 min-h-[calc(100vh-8rem)] bg-background px-4 py-8 font-sans sm:px-6 lg:px-10">
+      <div className="mx-auto w-full max-w-5xl">
+        <header className="mb-6">
+          <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.02em] text-[#161616]">
+            Browse language partners
+          </h1>
+        </header>
+
+        <section
+          aria-label="Search and filter"
+          className="rounded-[18px] border border-[#EAE3D8] bg-white p-5 shadow-card sm:p-6"
+        >
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <label
               htmlFor="search"
-              className={`relative w-full md:max-w-sm lg:max-w-md`}
+              className={`${labelClass} col-span-2 lg:col-span-4`}
             >
-              <span className="sr-only">Søg efter interesser</span>
-              <Search
-                aria-hidden="true"
-                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-light"
-              />
+              Search by name or topic
               <input
                 type="search"
                 id="search"
                 value={searchTerm}
                 onChange={handleSearchChange}
-                placeholder="Søg efter interesser"
-                className="w-full rounded-pill border border-surface bg-surface-alt py-3 pl-11 pr-4 text-sm font-semibold text-foreground outline-none placeholder:text-neutral-light focus:border-primary focus:ring-4 focus:ring-primary-pale"
+                placeholder="Example: Maja, food"
+                className={inputClass}
+              />
+            </label>
+
+            <label className={labelClass}>
+              City
+              <StyledDropdown
+                name="city"
+                value={cityFilter}
+                options={cityOptions}
+                isOpen={openDropdown === "city"}
+                onToggle={() =>
+                  setOpenDropdown(openDropdown === "city" ? "" : "city")
+                }
+                onSelect={handleDropdownChange}
+                onClose={() => setOpenDropdown("")}
+              />
+            </label>
+
+            <label className={labelClass}>
+              Role
+              <StyledDropdown
+                name="role"
+                value={roleFilter}
+                options={roleOptions}
+                isOpen={openDropdown === "role"}
+                onToggle={() =>
+                  setOpenDropdown(openDropdown === "role" ? "" : "role")
+                }
+                onSelect={handleDropdownChange}
+                onClose={() => setOpenDropdown("")}
+              />
+            </label>
+
+            <label className={labelClass}>
+              Danish level
+              <StyledDropdown
+                name="danishLevel"
+                value={danishLevelFilter}
+                options={danishLevelOptions}
+                isOpen={openDropdown === "danishLevel"}
+                onToggle={() =>
+                  setOpenDropdown(
+                    openDropdown === "danishLevel" ? "" : "danishLevel"
+                  )
+                }
+                onSelect={handleDropdownChange}
+                onClose={() => setOpenDropdown("")}
+              />
+            </label>
+
+            <label className={labelClass}>
+              Availability
+              <StyledDropdown
+                name="availability"
+                value={availabilityFilter}
+                options={availabilityOptions}
+                isOpen={openDropdown === "availability"}
+                onToggle={() =>
+                  setOpenDropdown(
+                    openDropdown === "availability" ? "" : "availability"
+                  )
+                }
+                onSelect={handleDropdownChange}
+                onClose={() => setOpenDropdown("")}
               />
             </label>
           </div>
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="flex max-w-full flex-nowrap items-center gap-2 overflow-x-auto overflow-y-visible py-3 px-1">
-              <div className="shrink-0">
-                <StyledDropdown //By
-                  name="city"
-                  value={cityFilter}
-                  options={cityOptions}
-                  isOpen={openDropdown === "city"}
-                  onToggle={() =>
-                    setOpenDropdown(openDropdown === "city" ? "" : "city")
-                  }
-                  onSelect={handleDropdownChange}
-                  onClose={() => setOpenDropdown("")}
-                />
-              </div>
 
-              <div className="shrink-0">
-                <StyledDropdown //Hvem vil du møde?
-                  name="role"
-                  value={roleFilter}
-                  options={roleOptions}
-                  isOpen={openDropdown === "role"}
-                  onToggle={() =>
-                    setOpenDropdown(openDropdown === "role" ? "" : "role")
-                  }
-                  onSelect={handleDropdownChange}
-                  onClose={() => setOpenDropdown("")}
-                />
-              </div>
-
-              <div className="shrink-0">
-                <StyledDropdown //Danskniveau
-                  name="danishLevel"
-                  value={danishLevelFilter}
-                  options={danishLevelOptions}
-                  isOpen={openDropdown === "danishLevel"}
-                  onToggle={() =>
-                    setOpenDropdown(
-                      openDropdown === "danishLevel" ? "" : "danishLevel"
-                    )
-                  }
-                  onSelect={handleDropdownChange}
-                  onClose={() => setOpenDropdown("")}
-                />
-              </div>
-
-              <div className="shrink-0">
-                <StyledDropdown //Tilgængelighed
-                  name="availability"
-                  value={availabilityFilter}
-                  options={availabilityOptions}
-                  isOpen={openDropdown === "availability"}
-                  onToggle={() =>
-                    setOpenDropdown(
-                      openDropdown === "availability" ? "" : "availability"
-                    )
-                  }
-                  onSelect={handleDropdownChange}
-                  onClose={() => setOpenDropdown("")}
-                />
-              </div>
-            </div>
-
-            <p className="hidden shrink-0 text-sm font-semibold text-neutral-light md:block">
-              {filteredUsers.length} partnere
-            </p>
-            <div className="flex items-center justify-between text-[14px] font-semibold text-neutral-light md:hidden">
-              <span>Best match</span>
-              <span>{filteredUsers.length} partnere</span>
-            </div>
+          <div className="mt-5 flex justify-end">
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              className="cursor-pointer rounded-full bg-[#ECE6DD] px-5 py-2.5 text-sm font-extrabold text-[#6E665C] transition hover:bg-[#F6F0E8] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px"
+            >
+              Reset filters
+            </button>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {filteredUsers.length > 0 ? (
-        <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
+        <p className="mt-4 text-sm font-semibold text-[#7C756B]">
+          Showing {filteredUsers.length} of {availableUsers.length} users
+        </p>
+
+        {filteredUsers.length > 0 ? (
           <section
             aria-label="Language partners"
             className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
@@ -440,13 +429,13 @@ function BrowsePage() {
               );
             })}
           </section>
-        </div>
-      ) : (
-        <EmptyState
-          title="No users found"
-          message="Try changing your search or filters."
-        />
-      )}
+        ) : (
+          <EmptyState
+            title="No users found"
+            message="Try changing your search or filters."
+          />
+        )}
+      </div>
     </main>
   );
 }
