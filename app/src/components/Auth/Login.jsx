@@ -71,7 +71,8 @@ function Login() {
             Øv dansk med rigtige mennesker.
           </h2>
           <p className="text-[15px] font-medium text-[#FFE3D6] mt-[14px] leading-relaxed max-w-[300px]">
-            Find modersmålstalere og andre sprogstuderende på dit niveau — over en kop kaffe, en chat eller et meetup.
+            Find modersmålstalere og andre sprogstuderende på dit niveau — over
+            en kop kaffe, en chat eller et meetup.
           </p>
 
           <div className="flex items-center mt-6">

@@ -3,99 +3,122 @@ import { useNavigate } from "react-router-dom";
 import { useApp } from "../../context/AppContext.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 
-export default function MatchCard({ match, context }) {
+export default function MatchCard({ match, onAction }) {
+
   const { respondToMatch, getUserById } = useApp();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [toast, setToast] = useState("");
   const [status, setStatus] = useState(match.status);
+
   const isReceiver = match.receiverId === user.id;
   const otherUserId = isReceiver ? match.requesterId : match.receiverId;
   const otherUser = getUserById(otherUserId);
+
   if (!otherUser) return null;
-  function showToast(message) {
-    setToast(message);
-    setTimeout(() => setToast(""), 2000);
-  }
-  function handleAccept() {
+
+  function handleAccept(e) {
+    e.stopPropagation();
     respondToMatch(match.id, "accepted");
     setStatus("accepted");
-    showToast("✅ Connected!");
+    onAction("✅ Connected!");
   }
-  function handleDecline() {
+
+  function handleDecline(e) {
+    e.stopPropagation();
     respondToMatch(match.id, "declined");
     setStatus("declined");
-    showToast("❌ Declined");
+    onAction("❌ Declined");
   }
-  function handleMessage() {
+
+  function handleMessage(e) {
+    e.stopPropagation();
     navigate(`/messages/${otherUser.id}`);
   }
-  const statusColors = {
-    pending: "bg-yellow-100 text-yellow-800",
-    accepted: "bg-green-100  text-green-800",
-    declined: "bg-red-100    text-red-800",
-  };
+
+  function handleCardClick() {
+    navigate(`/profile/${otherUser.id}`);
+  }
+
   return (
-    <div className="flex items-center gap-4 bg-white border border-gray-200 rounded-xl p-4 mb-3 shadow-sm relative">
-      {/* Toast */}
-      {toast && (
-        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-4 py-1 rounded-full whitespace-nowrap">
-          {toast}
+    <div
+      onClick={handleCardClick}
+      className="relative bg-white border border-gray-200 rounded-md p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow flex flex-col h-full"
+    >
+      <div className="flex items-start justify-between mb-2">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#E63946] text-white flex items-center justify-center font-bold">
+            {otherUser.avatar || otherUser.name?.[0]}
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-900">{otherUser.name}</h3>
+            <p className="text-xs text-gray-400">
+              {otherUser.city} · {otherUser.danishLevel}
+            </p>
+          </div>
+        </div>
+
+        {status === "pending" && (
+          <span
+            className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+              isReceiver
+                ? "bg-[#E63946]/10 text-[#E63946]"
+                : "bg-amber-100 text-amber-700"
+            }`}
+          >
+            {isReceiver ? "Received" : "Sent"}
+          </span>
+        )}
+      </div>
+
+      <p className="text-sm text-gray-500 mb-3 flex-1">{otherUser.bio}</p>
+
+      {status === "declined" && (
+        <p className="text-xs text-gray-400 mb-2">
+          {isReceiver
+            ? "You declined this request"
+            : `${otherUser.name} declined your request`}
+        </p>
+      )}
+
+      {status === "pending" && isReceiver && (
+        <div className="flex gap-2">
+          <button
+            onClick={handleAccept}
+            className="flex-1 bg-[#E63946] hover:bg-[#d62d3a] text-white text-sm font-medium px-3 py-2 rounded-full"
+          >
+            ✓ Accept
+          </button>
+          <button
+            onClick={handleDecline}
+            className="flex-1 border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium px-3 py-2 rounded-full"
+          >
+            Decline
+          </button>
         </div>
       )}
 
-      {/* Avatar */}
-      <div className="text-4xl min-w-[56px] text-center">
-        {otherUser.avatar}
-      </div>
-
-      {/* Info */}
-      <div className="flex-1">
-        <h3 className="font-semibold text-gray-900">{otherUser.name}</h3>
-        <p className="text-sm text-gray-500">
-          {otherUser.city} · {otherUser.danishLevel}
-        </p>
-        <p className="text-sm text-gray-400 mt-1">{otherUser.bio}</p>
-      </div>
-
-      {/* Actions */}
-      <div className="flex flex-col items-end gap-2">
-        <span
-          className={`text-xs font-semibold px-3 py-1 rounded-full ${statusColors[status]}`}
-        >
-          {status === "accepted" && "Connected "}
-          {status === "declined" &&
-            (isReceiver ? "You declined" : "Declined by Receiver")}
-          {status === "pending" && context === "pending" && "Wants to connect"}
-          {status === "pending" && context === "sent" && "Awaiting reply"}
-        </span>
-
-        {isReceiver && status === "pending" && context === "pending" && (
-          <div className="flex gap-2">
-            <button
-              onClick={handleAccept}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white text-sm px-3 py-1.5 rounded-md"
-            >
-              Accept
-            </button>
-            <button
-              onClick={handleDecline}
-              className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1.5 rounded-md"
-            >
-              Decline
-            </button>
-          </div>
-        )}
-
-        {match.status === "accepted" && (
+      {status === "pending" && !isReceiver && (
+        <div className="flex gap-2 items-center">
+          <span className="bg-amber-50 text-amber-700 text-sm font-medium px-3 py-1.5 rounded-full">
+            ⏱ Waiting for reply
+          </span>
           <button
-            onClick={handleMessage}
-            className="bg-indigo-500 hover:bg-indigo-600 text-white text-sm px-3 py-1.5 rounded-md"
+            onClick={handleDecline}
+            className="border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium px-3 py-1.5 rounded-full"
           >
-            Send Message
+            Withdraw
           </button>
-        )}
-      </div>
+        </div>
+      )}
+
+      {status === "accepted" && (
+        <button
+          onClick={handleMessage}
+          className="self-start bg-[#E63946] hover:bg-[#d62d3a] text-white text-sm font-medium px-4 py-2 rounded-full mt-auto"
+        >
+          Send Message
+        </button>
+      )}
     </div>
   );
 }

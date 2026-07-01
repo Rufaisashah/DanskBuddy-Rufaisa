@@ -30,10 +30,6 @@ function getRoleLabel(role: User["role"]) {
     return "Native speaker";
   }
 
-  if (role === "both") {
-    return "Learner and native speaker";
-  }
-
   return "Learner";
 }
 
@@ -257,9 +253,9 @@ function PublicProfile() {
 
         <div className="mt-5 grid gap-5 lg:grid-cols-3">
           <ProfileListSection
-            title="Topics"
-            items={profileUser.topics}
-            emptyMessage="No topics added yet."
+            title="Interests"
+            items={profileUser.interests}
+            emptyMessage="No interests added yet."
           />
 
           <ProfileListSection

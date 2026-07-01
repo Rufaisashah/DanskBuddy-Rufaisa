@@ -1,8 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { ChevronDown } from "lucide-react";
 
 export type SelectOption = {
   value: string;
   label: string;
+  menuLabel?: string;
 };
 
 type StyledDropdownProps<DName extends string> = {
@@ -15,6 +18,13 @@ type StyledDropdownProps<DName extends string> = {
   onClose: () => void;
 };
 
+type MenuPosition = {
+  top: number;
+  left: number;
+  width: number;
+  isPositioned: boolean;
+};
+
 export default function StyledDropdown<DName extends string>({
   name,
   value,
@@ -25,14 +35,59 @@ export default function StyledDropdown<DName extends string>({
   onClose,
 }: StyledDropdownProps<DName>) {
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const [menuPosition, setMenuPosition] = useState<MenuPosition>({
+    top: 0,
+    left: 0,
+    width: 0,
+    isPositioned: false,
+  });
+
   const selectedOption =
     options.find((option) => option.value === value) ?? options[0];
 
+  function updateMenuPosition() {
+    if (!dropdownRef.current) {
+      return;
+    }
+
+    const rect = dropdownRef.current.getBoundingClientRect();
+
+    setMenuPosition({
+      top: rect.bottom + window.scrollY + 8,
+      left: rect.left + window.scrollX,
+      width: rect.width,
+      isPositioned: true,
+    });
+  }
+
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    updateMenuPosition();
+  }, [isOpen]);
+
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      setMenuPosition({
+        top: 0,
+        left: 0,
+        width: 0,
+        isPositioned: false,
+      });
+      return;
+    }
 
     function handlePointerDown(event: PointerEvent) {
-      if (!dropdownRef.current?.contains(event.target as Node)) {
+      const target = event.target as Node;
+
+      const clickedButton = dropdownRef.current?.contains(target);
+      const clickedMenu = menuRef.current?.contains(target);
+
+      if (!clickedButton && !clickedMenu) {
         onClose();
       }
     }
@@ -43,79 +98,82 @@ export default function StyledDropdown<DName extends string>({
       }
     }
 
+    window.addEventListener("resize", updateMenuPosition);
+    window.addEventListener("scroll", updateMenuPosition, true);
+
     document.addEventListener("pointerdown", handlePointerDown);
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      window.removeEventListener("resize", updateMenuPosition);
+      window.removeEventListener("scroll", updateMenuPosition, true);
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
 
+  function handleSelect(optionValue: string) {
+    onSelect(name, optionValue);
+    onClose();
+  }
+
+  const menu = isOpen ? (
+    <div
+      ref={menuRef}
+      className="absolute z-50 w-max rounded-2xl border border-surface bg-white p-1.5 shadow-card"
+      style={{
+        top: menuPosition.top,
+        left: menuPosition.left,
+        minWidth: menuPosition.width,
+        opacity: menuPosition.isPositioned ? 1 : 0,
+      }}
+    >
+      <div role="listbox" aria-label={name}>
+        {options.map((option) => {
+          const isSelected = option.value === value;
+
+          return (
+            <button
+              key={option.value}
+              type="button"
+              role="option"
+              aria-selected={isSelected}
+              onClick={() => handleSelect(option.value)}
+              className={`flex w-full cursor-pointer items-center justify-between whitespace-nowrap rounded-xl px-3.5 py-2.5 text-left text-sm font-semibold transition ${
+                isSelected
+                  ? "bg-primary-pale text-primary-dark"
+                  : "text-neutral hover:bg-surface-alt hover:text-foreground"
+              }`}
+            >
+              <span>{option.menuLabel ?? option.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  ) : null;
+
   return (
-    <div ref={dropdownRef} className="relative mt-2">
+    <div ref={dropdownRef} className="relative">
       <button
         type="button"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         onClick={onToggle}
-        className="flex w-full cursor-pointer items-center justify-between rounded-2xl border border-[#ECE6DD] bg-white px-4 py-3.5 text-left text-[15px] font-semibold text-[#2B2A28] outline-none transition hover:border-[#E6DCCF] hover:bg-[#FBF7F1] focus:border-[#E63946] focus:ring-4 focus:ring-[#FDEAEC] active:bg-[#F6F0E8]"
+        className="flex h-11 w-full cursor-pointer items-center justify-between gap-2 rounded-pill border border-surface bg-white px-4 text-left text-sm font-semibold text-foreground outline-none transition hover:bg-surface-alt focus:border-primary focus:ring-4 focus:ring-primary-pale"
       >
         <span>{selectedOption.label}</span>
-        <span
+
+        <ChevronDown
+          size={15}
           aria-hidden="true"
-          className={`text-[#A89F94] transition-transform ${
+          className={`text-neutral-light transition-transform ${
             isOpen ? "rotate-180" : ""
           }`}
-        >
-          ▾
-        </span>
+        />
       </button>
 
-      {isOpen && (
-        <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-20 overflow-hidden rounded-2xl border border-[#EFE8DD] bg-white p-1.5 shadow-[0_18px_32px_-18px_rgba(43,42,40,0.45)]">
-          <div
-            role="listbox"
-            aria-label={name}
-            className="max-h-56 overflow-auto"
-          >
-            {options.map((option) => {
-              const isSelected = option.value === value;
-
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  role="option"
-                  aria-selected={isSelected}
-                  onClick={() => onSelect(name, option.value)}
-                  className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-sm font-bold transition ${
-                    isSelected
-                      ? "bg-[#FDEAEC] text-[#D62F3C]"
-                      : "text-[#6E665C] hover:bg-[#F6F0E8] hover:text-[#2B2A28]"
-                  }`}
-                >
-                  <span>{option.label}</span>
-                  {isSelected && (
-                    <svg
-                      aria-hidden="true"
-                      viewBox="0 0 24 24"
-                      className="h-4 w-4 text-[#E63946]"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="m5 12 4 4 10-10" />
-                    </svg>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      {menu ? createPortal(menu, document.body) : null}
     </div>
   );
 }

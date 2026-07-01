@@ -250,9 +250,7 @@ function Register() {
                   required
                 />
                 {passwordError && (
-                  <p className="text-xs text-[#B0202C]">
-                    {passwordError}
-                  </p>
+                  <p className="text-xs text-[#B0202C]">{passwordError}</p>
                 )}
               </label>
             </div>
