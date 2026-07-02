@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
+import Avatar from "../Shared/Avatar";
+import StyledDropdown from "../Shared/StyledDropdown";
 
 import { useAuth } from "../../context/AuthContext";
 
@@ -15,8 +17,8 @@ type ProfileUser = {
   danishLevel: string;
   nativeLanguage: string;
   learningGoals: string;
-  topics: string[];
-  availability: string;
+  interests: string[];
+  availability: string[];
   bio: string;
   createdAt?: string;
 };
@@ -35,7 +37,7 @@ type ProfileFormData = {
   danishLevel: string;
   nativeLanguage: string;
   learningGoals: string;
-  topics: string;
+  interests: string;
   availability: string;
   bio: string;
 };
@@ -106,8 +108,8 @@ function getFormDataFromUser(user: ProfileUser): ProfileFormData {
     danishLevel: user.danishLevel ?? "",
     nativeLanguage: user.nativeLanguage ?? "",
     learningGoals: user.learningGoals ?? "",
-    topics: user.topics?.join(", ") ?? "",
-    availability: user.availability ?? "",
+    interests: user.interests?.join(", ") ?? "",
+    availability: user.availability?.[0] ?? "",
     bio: user.bio ?? "",
   };
 }
@@ -130,92 +132,18 @@ function getOptionLabel(options: SelectOption[], value: string) {
   )?.label;
 }
 
-function StyledDropdown({
-  name,
-  value,
-  options,
-  isOpen,
-  onToggle,
-  onSelect,
-}: {
-  name: DropdownName;
-  value: string;
-  options: SelectOption[];
-  isOpen: boolean;
-  onToggle: () => void;
-  onSelect: (name: DropdownName, value: string) => void;
-}) {
-  const dropdownOptions = getOptionsWithCurrentValue(options, value);
-  const selectedOption =
-    dropdownOptions.find((option) => option.value === value) ??
-    dropdownOptions[0];
+function getAvailabilityLabel(value: string) {
+  return getOptionLabel(availabilityOptions, value) || value;
+}
 
-  return (
-    <div className="relative mt-2">
-      <button
-        type="button"
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        onClick={onToggle}
-        className="flex w-full cursor-pointer items-center justify-between rounded-2xl border border-[#ECE6DD] bg-white px-4 py-3.5 text-left text-[15px] font-semibold text-[#2B2A28] outline-none transition hover:border-[#E6DCCF] hover:bg-[#FBF7F1] focus:border-[#E63946] focus:ring-4 focus:ring-[#FDEAEC] active:bg-[#F6F0E8]"
-      >
-        <span>{selectedOption?.label}</span>
-        <span
-          aria-hidden="true"
-          className={`text-[#A89F94] transition-transform ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        >
-          ▾
-        </span>
-      </button>
-
-      {isOpen && (
-        <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-20 overflow-hidden rounded-2xl border border-[#EFE8DD] bg-white p-1.5 shadow-[0_18px_32px_-18px_rgba(43,42,40,0.45)]">
-          <div
-            role="listbox"
-            aria-label={name}
-            className="max-h-56 overflow-auto"
-          >
-            {dropdownOptions.map((option) => {
-              const isSelected = option.value === value;
-
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  role="option"
-                  aria-selected={isSelected}
-                  onClick={() => onSelect(name, option.value)}
-                  className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-sm font-bold transition ${
-                    isSelected
-                      ? "bg-[#FDEAEC] text-[#D62F3C]"
-                      : "text-[#6E665C] hover:bg-[#F6F0E8] hover:text-[#2B2A28]"
-                  }`}
-                >
-                  <span>{option.label}</span>
-                  {isSelected && (
-                    <svg
-                      aria-hidden="true"
-                      viewBox="0 0 24 24"
-                      className="h-4 w-4 text-[#E63946]"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="m5 12 4 4 10-10" />
-                    </svg>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 }
 
 function MyProfile() {
@@ -234,7 +162,7 @@ function MyProfile() {
     danishLevel: "",
     nativeLanguage: "",
     learningGoals: "",
-    topics: "",
+    interests: "",
     availability: "",
     bio: "",
   });
@@ -307,11 +235,11 @@ function MyProfile() {
       danishLevel: formData.danishLevel,
       nativeLanguage: formData.nativeLanguage,
       learningGoals: formData.learningGoals,
-      topics: formData.topics
+      interests: formData.interests
         .split(",")
-        .map((topic) => topic.trim())
+        .map((interests) => interests.trim())
         .filter(Boolean),
-      availability: formData.availability,
+      availability: formData.availability ? [formData.availability] : [],
       bio: formData.bio,
     };
 
@@ -339,15 +267,13 @@ function MyProfile() {
       {!isEditing ? (
         <section className="mx-auto mt-8 w-full max-w-[520px] rounded-[18px] border border-[#EAE3D8] bg-white p-5 shadow-[0_32px_64px_-24px_rgba(33,30,28,0.40),0_8px_20px_-12px_rgba(33,30,28,0.28)] sm:p-8">
           <div className="space-y-5">
-            <div className={readOnlyRowClass}>
-              <span className={labelClass}>Avatar:</span>
-              <p className={readOnlyValueClass}>
-                {getOptionLabel(avatarOptions, currentUser.avatar) ||
-                  currentUser.avatar ||
-                  "No avatar"}
-              </p>
+            <div className="rounded-full border-4 border-white shadow-[0_12px_24px_-16px_rgba(33,30,28,0.55)]">
+              <Avatar
+                initials={getInitials(currentUser.name)}
+                size="profile"
+                color="#9B77E5"
+              />
             </div>
-
             <div className={readOnlyRowClass}>
               <span className={labelClass}>Name:</span>
               <p className={readOnlyValueClass}>{currentUser.name}</p>
@@ -389,21 +315,22 @@ function MyProfile() {
             </div>
 
             <div className={readOnlyRowClass}>
-              <span className={labelClass}>Topics:</span>
+              <span className={labelClass}>Interests:</span>
               <p className={readOnlyValueClass}>
-                {currentUser.topics && currentUser.topics.length > 0
-                  ? currentUser.topics.join(", ")
-                  : "No topics added"}
+                {currentUser.interests && currentUser.interests.length > 0
+                  ? currentUser.interests.join(", ")
+                  : "No interests added"}
               </p>
             </div>
 
             <div className={readOnlyRowClass}>
               <span className={labelClass}>Availability:</span>
               <p className={readOnlyValueClass}>
-                {getOptionLabel(
-                  availabilityOptions,
-                  currentUser.availability
-                ) || currentUser.availability}
+                {currentUser.availability && currentUser.availability.length > 0
+                  ? currentUser.availability
+                      .map(getAvailabilityLabel)
+                      .join(", ")
+                  : "No availability added"}
               </p>
             </div>
 
@@ -484,62 +411,74 @@ function MyProfile() {
 
             <label className={labelClass}>
               Avatar
-              <StyledDropdown
-                name="avatar"
-                value={formData.avatar}
-                options={avatarOptions}
-                isOpen={openDropdown === "avatar"}
-                onToggle={() =>
-                  setOpenDropdown(openDropdown === "avatar" ? "" : "avatar")
-                }
-                onSelect={handleDropdownChange}
-              />
+              <div className="mt-2">
+                <StyledDropdown
+                  name="avatar"
+                  value={formData.avatar}
+                  options={avatarOptions}
+                  isOpen={openDropdown === "avatar"}
+                  onToggle={() =>
+                    setOpenDropdown(openDropdown === "avatar" ? "" : "avatar")
+                  }
+                  onSelect={handleDropdownChange}
+                  onClose={() => setOpenDropdown("")}
+                />
+              </div>
             </label>
 
             <label className={labelClass}>
               City
-              <StyledDropdown
-                name="city"
-                value={formData.city}
-                options={cityOptions}
-                isOpen={openDropdown === "city"}
-                onToggle={() =>
-                  setOpenDropdown(openDropdown === "city" ? "" : "city")
-                }
-                onSelect={handleDropdownChange}
-              />
+              <div className="mt-2">
+                <StyledDropdown
+                  name="city"
+                  value={formData.city}
+                  options={cityOptions}
+                  isOpen={openDropdown === "city"}
+                  onToggle={() =>
+                    setOpenDropdown(openDropdown === "city" ? "" : "city")
+                  }
+                  onSelect={handleDropdownChange}
+                  onClose={() => setOpenDropdown("")}
+                />
+              </div>
             </label>
 
             <label className={labelClass}>
               Danish level
-              <StyledDropdown
-                name="danishLevel"
-                value={formData.danishLevel}
-                options={danishLevelOptions}
-                isOpen={openDropdown === "danishLevel"}
-                onToggle={() =>
-                  setOpenDropdown(
-                    openDropdown === "danishLevel" ? "" : "danishLevel"
-                  )
-                }
-                onSelect={handleDropdownChange}
-              />
+              <div className="mt-2">
+                <StyledDropdown
+                  name="danishLevel"
+                  value={formData.danishLevel}
+                  options={danishLevelOptions}
+                  isOpen={openDropdown === "danishLevel"}
+                  onToggle={() =>
+                    setOpenDropdown(
+                      openDropdown === "danishLevel" ? "" : "danishLevel"
+                    )
+                  }
+                  onSelect={handleDropdownChange}
+                  onClose={() => setOpenDropdown("")}
+                />
+              </div>
             </label>
 
             <label className={labelClass}>
               Availability
-              <StyledDropdown
-                name="availability"
-                value={formData.availability}
-                options={availabilityOptions}
-                isOpen={openDropdown === "availability"}
-                onToggle={() =>
-                  setOpenDropdown(
-                    openDropdown === "availability" ? "" : "availability"
-                  )
-                }
-                onSelect={handleDropdownChange}
-              />
+              <div className="mt-2">
+                <StyledDropdown
+                  name="availability"
+                  value={formData.availability}
+                  options={availabilityOptions}
+                  isOpen={openDropdown === "availability"}
+                  onToggle={() =>
+                    setOpenDropdown(
+                      openDropdown === "availability" ? "" : "availability"
+                    )
+                  }
+                  onSelect={handleDropdownChange}
+                  onClose={() => setOpenDropdown("")}
+                />
+              </div>
             </label>
 
             <label htmlFor="nativeLanguage" className={labelClass}>
@@ -566,13 +505,13 @@ function MyProfile() {
               />
             </label>
 
-            <label htmlFor="topics" className={labelClass}>
-              Topics
+            <label htmlFor="interests" className={labelClass}>
+              Interests
               <input
-                id="topics"
-                name="topics"
+                id="interests"
+                name="interests"
                 type="text"
-                value={formData.topics}
+                value={formData.interests}
                 onChange={handleChange}
                 placeholder="culture, food, travel"
                 className={fieldClass}
