@@ -109,7 +109,7 @@ function matchesSearch(user: User, searchTerm: string) {
   }
 
   const name = user.name.toLowerCase();
-  const topics = user.interests ?? [];
+  const topics = user.topics ?? [];
 
   const topicMatches = topics.some((topic) =>
     topic.toLowerCase().includes(normalizedSearch)
@@ -149,7 +149,7 @@ function toProfileCardUser(user: User): ProfileCardUser {
     city: user.city ?? "Unknown city",
     role: user.role?.value ?? "learner",
     danishLevel: user.danishLevel ?? "Not selected",
-    interests: user.interests ?? [],
+    interests: user.topics ?? [],
     bio: user.bio ?? "No bio yet.",
   };
 }
