@@ -100,7 +100,7 @@ export default function ChatWindow() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-1 bg-surface">
+      <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-1 bg-#F4EFE8">
         {messages.length === 0 ? (
           <p className="text-center text-neutral text-sm mt-8">
             Ingen beskeder endnu

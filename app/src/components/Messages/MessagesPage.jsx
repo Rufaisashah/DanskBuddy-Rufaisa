@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useApp } from "../../context/AppContext";
 import { useAuth } from "../../context/AuthContext";
 import MessagesList from "./MessagesList";
@@ -18,44 +18,46 @@ export default function MessagesPage() {
   if (!user) return <Navigate to="/login" />;
 
   // Build conversation list from messages
-  const conversations = Object.entries(messages || {})
-    .reduce((result, [conversationId, msgs]) => {
-      const [id1, id2] = conversationId.split("::");
-      const isMine =
-        String(id1) === String(user.id) || String(id2) === String(user.id);
-      if (!isMine) return result;
+  const conversations = useMemo(() => {
+    return Object.entries(messages || {})
+      .reduce((result, [conversationId, msgs]) => {
+        const [id1, id2] = conversationId.split("::");
+        const isMine =
+          String(id1) === String(user.id) || String(id2) === String(user.id);
+        if (!isMine) return result;
 
-      const otherUserId = String(id1) === String(user.id) ? id2 : id1;
-      const otherUser = users.find((u) => String(u.id) === String(otherUserId));
-      if (!otherUser) return result;
+        const otherUserId = String(id1) === String(user.id) ? id2 : id1;
+        const otherUser = users.find(
+          (u) => String(u.id) === String(otherUserId)
+        );
+        if (!otherUser) return result;
 
-      const lastMsg = msgs[msgs.length - 1];
-      result.push({
-        conversationId,
-        otherUser,
-        lastMessage: lastMsg?.text ?? "",
-        lastMessageAt: lastMsg?.createdAt ?? "",
-        lastSenderId: lastMsg?.senderId ?? "",
-      });
-      return result;
-    }, [])
-    .sort((a, b) => new Date(b.lastMessageAt) - new Date(a.lastMessageAt));
-
+        const lastMsg = msgs[msgs.length - 1];
+        result.push({
+          conversationId,
+          otherUser,
+          lastMessage: lastMsg?.text ?? "",
+          lastMessageAt: lastMsg?.createdAt ?? "",
+          lastSenderId: lastMsg?.senderId ?? "",
+        });
+        return result;
+      }, [])
+      .sort((a, b) => new Date(b.lastMessageAt) - new Date(a.lastMessageAt));
+  }, [messages, users, user]);
+  const topConversationId = conversations[0]?.otherUser?.id ?? null;
   // Auto-open the first conversation on desktop
   useEffect(() => {
     function checkAndRedirect() {
-      if (!chatOpen && conversations.length > 0 && window.innerWidth >= 768) {
-        navigate(`/messages/${conversations[0].otherUser.id}`, {
+      if (!chatOpen && topConversationId && window.innerWidth >= 768) {
+        navigate(`/messages/${topConversationId}`, {
           replace: true,
         });
       }
     }
-
     checkAndRedirect();
-
     window.addEventListener("resize", checkAndRedirect);
     return () => window.removeEventListener("resize", checkAndRedirect);
-  }, [chatOpen, conversations.length]);
+  }, [chatOpen, topConversationId]);
 
   const filteredConversations = conversations.filter((c) =>
     c.otherUser.name.toLowerCase().includes(search.toLowerCase())

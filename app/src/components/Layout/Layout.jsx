@@ -44,11 +44,11 @@ export default function Layout() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-[#F4EFE8]">
       {/* ── SIDEBAR — desktop only ── */}
-      <aside className="hidden md:flex flex-col w-56 bg-white border-r border-gray-100 min-h-screen sticky top-0 h-screen">
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#EFE8E1] min-h-screen sticky top-0 h-screen">
         {/* Logo */}
         <NavLink
           to="/browse"
-          className="flex items-center gap-3 px-5 py-5 no-underline"
+          className="flex items-center gap-3 px-6 py-6 no-underline"
         >
           <img
             src="/icons/icon-192.png"
@@ -68,9 +68,9 @@ export default function Layout() {
               key={to}
               to={to}
               className={({ isActive }) =>
-                `relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors no-underline ${
+                `relative flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-colors no-underline ${
                   isActive
-                    ? "bg-[#E63946]/10 text-[#E63946]"
+                    ? "bg-[#FDEBEC] text-[#E63946]"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`
               }
@@ -87,39 +87,52 @@ export default function Layout() {
         </nav>
 
         {/* Bottom — user + menu */}
-        <div className="relative px-3 py-4 border-t border-gray-100">
+        {/* Bottom — user + menu */}
+        <div className="relative mt-auto p-3">
           <button
             type="button"
             onClick={() => setIsUserMenuOpen((open) => !open)}
-            className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 bg-transparent border-none cursor-pointer hover:bg-gray-100 transition-colors"
+            className="
+flex w-full items-center gap-3
+rounded-2xl
+border border-[#EFE8E1]
+bg-white
+px-4 py-3
+shadow-sm
+hover:bg-gray-50
+transition-all
+text-left
+"
           >
             {user?.avatar ? (
               <span className="text-xl">{user.avatar}</span>
             ) : (
               <div
-                className="w-9 h-9 rounded-full text-white flex items-center justify-center text-sm font-bold shrink-0"
+                className="w-10 h-10 rounded-full flex-shrink-0 text-white flex items-center justify-center text-sm font-bold"
                 style={{ background: avatarColor(user?.id ?? "") }}
               >
                 {getInitials(user?.name ?? "")}
               </div>
             )}
-            <div className="flex flex-col leading-tight flex-1 min-w-0 text-left">
-              <span className="font-semibold text-gray-900 truncate">
+
+            <div className="flex-1 min-w-0 overflow-hidden">
+              <span className="block text-sm font-semibold text-gray-900 truncate">
                 {user?.name}
               </span>
-              <span className="text-xs text-gray-400 truncate">
+              <span className="block text-xs text-gray-500 truncate">
                 {user?.role?.value || "Learner"}
                 {user?.danishLevel ? ` · ${user.danishLevel}` : ""}
               </span>
             </div>
-            <MoreVertical size={16} className="text-gray-400 shrink-0" />
+
+            <MoreVertical size={16} className="text-gray-400 flex-shrink-0" />
           </button>
 
           {isUserMenuOpen && (
-            <div className="absolute bottom-[calc(100%+4px)] left-3 right-3 rounded-lg border border-gray-100 bg-white shadow-card overflow-hidden">
+            <div className="absolute bottom-[calc(100%+10px)] left-3 right-3 rounded-2xl border border-[#EFE8E1] bg-white shadow-lg overflow-hidden">
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors w-full text-left bg-transparent border-none cursor-pointer"
+                className="flex w-full items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:bg-red-50 hover:text-red-600"
               >
                 <LogOut size={16} />
                 Log out
@@ -137,12 +150,6 @@ export default function Layout() {
         >
           <Outlet />
         </main>
-
-        {!isChatRoute && (
-          <footer className="text-center text-sm text-gray-400 py-4 border-t bg-white">
-            © 2026 DanskBuddy · Find your Danish conversation partner 🇩🇰
-          </footer>
-        )}
       </div>
 
       {/* ── BOTTOM TAB BAR — mobile only ── */}

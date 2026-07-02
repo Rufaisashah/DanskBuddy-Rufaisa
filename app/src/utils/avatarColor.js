@@ -11,9 +11,14 @@ const COLORS = [
 ];
 
 export function avatarColor(id) {
+  if (id === undefined || id === null || id === "") {
+    return COLORS[0];
+  }
+
   let hash = 0;
-  for (let i = 0; i < String(id).length; i++) {
-    hash = String(id).charCodeAt(i) + ((hash << 5) - hash);
+  const str = String(id);
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
   return COLORS[Math.abs(hash) % COLORS.length];
 }
