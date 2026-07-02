@@ -62,6 +62,9 @@ export function AppProvider({ children }) {
       topics: [],
       ...userData,
     };
+    if (newUser.role && typeof newUser.role === "object") {
+  newUser.role = newUser.role.value || newUser.role.label || "learner";
+}
     setUsers((prev) => [...prev, newUser]);
     return newUser;
   }, []);
@@ -87,8 +90,9 @@ export function AppProvider({ children }) {
     (requesterId, receiverId) => {
       const exists = matches.some(
         (m) =>
-          (m.requesterId === requesterId && m.receiverId === receiverId) ||
-          (m.requesterId === receiverId && m.receiverId === requesterId)
+          m.status === "pending" &&
+          ((m.requesterId === requesterId && m.receiverId === receiverId) ||
+            (m.requesterId === receiverId && m.receiverId === requesterId))
       );
       if (exists) return { success: false, error: "Already sent." };
       const match = {
@@ -109,6 +113,20 @@ export function AppProvider({ children }) {
       prev.map((m) => (m.id === matchId ? { ...m, status } : m))
     );
   }, []);
+  const resendMatch = useCallback((matchId, newRequesterId) => {
+  setMatches((prev) =>
+    prev.map((m) =>
+      m.id === matchId
+        ? {
+            ...m,
+            status: "pending",
+            requesterId: newRequesterId,
+            receiverId: m.requesterId === newRequesterId ? m.receiverId : m.requesterId,
+          }
+        : m
+    )
+  );
+}, []);
 
   const getMatchesForUser = useCallback(
     (userId) => {
@@ -157,8 +175,8 @@ export function AppProvider({ children }) {
     },
     [messages, buildConversationId]
   );
-  const markMessagesAsRead= useCallback((conversationId) => {
-      setMessageReadTimestamps((prev) => ({
+  const markMessagesAsRead = useCallback((conversationId) => {
+    setMessageReadTimestamps((prev) => ({
       ...prev,
       [conversationId]: Date.now(),
     }));
@@ -227,6 +245,7 @@ export function AppProvider({ children }) {
         getAllNatives,
         sendMatchRequest,
         respondToMatch,
+        resendMatch,
         getMatchesForUser,
         getAcceptedMatchesForUser,
         buildConversationId,
