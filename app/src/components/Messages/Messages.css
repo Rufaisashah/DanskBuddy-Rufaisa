@@ -6,15 +6,22 @@
 }
 
 .back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   background: transparent;
-  color: var(--color-primary);
-  font-size: var(--text-xl);
+  color: var(--color-);
   cursor: pointer;
   padding: 0;
   margin-right: var(--space-3);
 }
 
+@media (min-width: 768px) {
+  .back-button {
+    display: none;
+  }
+}
 .message-row {
   display: flex;
   margin: 8px 0;

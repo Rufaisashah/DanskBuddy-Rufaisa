@@ -64,10 +64,7 @@ export default function MessagesPage() {
   // If user has zero conversations at all, show one single empty state
   if (conversations.length === 0) {
     return (
-      <div
-        className="flex flex-col items-center justify-center -m-8 bg-background gap-3 text-center px-8"
-        style={{ height: "calc(100vh - 64px)" }}
-      >
+      <div className="flex flex-1 min-h-0 flex-col items-center justify-center bg-background gap-3 text-center px-8">
         <p className="text-5xl">💬</p>
         <h3 className="m-0 text-lg font-bold text-foreground">
           Ingen samtaler endnu
@@ -86,20 +83,14 @@ export default function MessagesPage() {
   }
 
   return (
-    <div
-      className="flex overflow-hidden -m-8 bg-background"
-      style={{ height: "calc(100vh - 64px)" }}
-    >
-      {/* TODO: When global sidebar layout merges, this -m-8 and h-screen
-    may need adjusting to account for sidebar width + topbar height}*/}
-
+    <div className="flex flex-1 min-h-0 overflow-hidden bg-background">
       {/* ── Left panel — conversation list ── */}
       <div
-        className={`${chatOpen ? "hidden md:flex" : "flex"} flex-col w-full md:w-[320px] border-r border-surface bg-[#faf6f0] shrink-0`}
+        className={`${chatOpen ? "hidden md:flex" : "flex"} flex-col w-full md:w-[320px] border-r border-surface bg-white shrink-0`}
       >
         <div className="px-6 pt-6 pb-4 border-b border-surface">
           <h2 className="text-2xl font-bold text-foreground mb-4">Beskeder</h2>
-          <div className="flex items-center gap-2 h-11 bg-white border border-[#ece6dd] rounded-full px-4">
+          <div className="flex items-center gap-2 h-11 bg-[#F4EFE8] border border-[#ece6dd] rounded-full px-4">
             <Search size={16} className="text-neutral shrink-0" />
             <input
               placeholder="Søg samtaler..."
@@ -133,7 +124,7 @@ export default function MessagesPage() {
 
       {/* ── Right panel — chat window ── */}
       <div
-        className={`${chatOpen ? "flex" : "hidden md:flex"} flex-1 flex-col`}
+        className={`${chatOpen ? "flex" : "hidden md:flex"} flex-1 min-h-0 flex-col`}
       >
         {chatOpen ? (
           <Outlet />
