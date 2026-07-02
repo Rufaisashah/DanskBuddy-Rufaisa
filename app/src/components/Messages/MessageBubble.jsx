@@ -38,7 +38,7 @@ export default function MessageBubble({ message, isMine }) {
       }
     >
       <div
-        className={`px-4 py-2 rounded-2xl max-w-[70%] text-sm ${
+        className={`relative px-4 pt-3 pb-6 rounded-2xl max-w-[70%] text-sm ${
           isMine
             ? "bg-[#E63946] text-white"
             : "bg-white text-gray-800 shadow-sm"
@@ -47,7 +47,11 @@ export default function MessageBubble({ message, isMine }) {
         <div>{isTranslated ? translatedText : message?.text}</div>
 
         {message?.createdAt && (
-          <span className="text-xs opacity-60">
+          <span
+            className={`absolute bottom-2 right-3 text-[11px] ${
+              isMine ? "text-white/80" : "text-neutral-light"
+            }`}
+          >
             {formatMessageTime(message.createdAt)}
           </span>
         )}
