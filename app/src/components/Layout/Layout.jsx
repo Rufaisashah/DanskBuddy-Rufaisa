@@ -78,7 +78,13 @@ export default function Layout() {
               <span className="text-xl">{user.avatar}</span>
             ) : (
               <div className="w-8 h-8 rounded-full bg-[#E63946] text-white flex items-center justify-center text-sm font-bold">
-                {user?.name?.[0]}
+                {user?.name
+                  ?.trim()
+                  .split(" ")
+                  .slice(0, 2)
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase()}
               </div>
             )}
             <div className="flex flex-col leading-tight">
@@ -86,7 +92,9 @@ export default function Layout() {
                 {user?.name?.split(" ")[0]}
               </span>
               <span className="text-xs text-gray-400 capitalize">
-                {user?.role || "Learner"}
+                {typeof user?.role === "string"
+                  ? user.role
+                  : user?.role?.label || "Learner"}
               </span>
             </div>
           </div>
@@ -120,24 +128,32 @@ export default function Layout() {
             </span>
           </NavLink>
           <div className="w-8 h-8 rounded-full bg-[#E63946] text-white flex items-center justify-center text-sm font-bold">
-            {user?.name?.[0]}
+            {user?.name
+              ?.trim()
+              .split(" ")
+              .slice(0, 2)
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()}
           </div>
         </div>
 
         <main className="flex-1 p-6 md:p-8">
           <Outlet />
         </main>
-
-        <footer className="text-center text-sm text-gray-400 py-4 border-t bg-white">
-          © 2026 DanskBuddy · Find your Danish conversation partner 🇩🇰
-        </footer>
       </div>
 
       {/* ── BOTTOM TAB BAR — mobile only ── */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50 px-2">
         {navLinks
           .filter(({ to }) =>
-            ["/feed", "/matches", "/messages", "/profile/me"].includes(to)
+            [
+              "/feed",
+              "/browse",
+              "/matches",
+              "/messages",
+              "/profile/me",
+            ].includes(to)
           )
           .map(({ to, label, icon: Icon, badge }) => (
             <NavLink
