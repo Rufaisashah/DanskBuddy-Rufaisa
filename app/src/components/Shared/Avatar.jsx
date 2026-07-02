@@ -5,6 +5,7 @@ const SIZE = {
   sm: "w-8 h-8 text-[11px]",
   md: "w-[34px] h-[34px] text-[13px]",
   lg: "w-14 h-14 text-base",
+  profile: "w-[92px] h-[92px] text-[28px]",
 };
 
 export default function Avatar({
