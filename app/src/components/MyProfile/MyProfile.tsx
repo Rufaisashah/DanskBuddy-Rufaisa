@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { ChangeEvent, FormEvent } from "react";
+import type { ChangeEvent, FormEvent, KeyboardEvent } from "react";
 import Avatar from "../Shared/Avatar";
 import StyledDropdown from "../Shared/StyledDropdown";
 import LevelBadge from "../Shared/LevelBadge";
@@ -70,45 +70,35 @@ type SelectOption<T extends string = string> = {
   label: string;
 };
 
-type DropdownName = "avatar" | "city" | "danishLevel" | "availability";
+type DropdownName = "city" | "danishLevel" | "availability";
 
 const roleOptions: UserRole[] = [
   { value: "learner", label: "Lærer dansk" },
   { value: "native", label: "Taler dansk" },
 ];
 
-const avatarOptions: SelectOption[] = [
-  { value: "🙂", label: "🙂 Friendly" },
-  { value: "👩", label: "👩 Woman" },
-  { value: "👨", label: "👨 Man" },
-  { value: "👩‍🦰", label: "👩‍🦰 Red hair" },
-  { value: "👨‍🦱", label: "👨‍🦱 Curly hair" },
-  { value: "👩‍🦳", label: "👩‍🦳 Older woman" },
-  { value: "🧑", label: "🧑 Person" },
-];
-
 const cityOptions: SelectOption[] = [
-  { value: "Copenhagen", label: "Copenhagen" },
+  { value: "København", label: "København" },
   { value: "Aarhus", label: "Aarhus" },
   { value: "Odense", label: "Odense" },
-  { value: "Other", label: "Other" },
+  { value: "Aalborg", label: "Aalborg" },
 ];
 
 const danishLevelOptions: SelectOption<DanishLevel>[] = [
-  { value: "A1", label: "A1 · Beginner" },
-  { value: "A2", label: "A2 · Elementary" },
-  { value: "B1", label: "B1 · Intermediate" },
-  { value: "B2", label: "B2 · Upper intermediate" },
-  { value: "C1", label: "C1 · Advanced" },
-  { value: "C2", label: "C2 · Native-like" },
+  { value: "A1", label: "A1 · Begynder" },
+  { value: "A2", label: "A2 · Elementær" },
+  { value: "B1", label: "B1 · Mellem" },
+  { value: "B2", label: "B2 · Øvre mellem" },
+  { value: "C1", label: "C1 · Avanceret" },
+  { value: "C2", label: "C2 · Modersmål" },
 ];
 
 const availabilityOptions: SelectOption[] = [
-  { value: "weekends", label: "Weekends" },
-  { value: "evenings", label: "Evenings" },
-  { value: "weekdays", label: "Weekdays" },
-  { value: "mornings", label: "Mornings" },
-  { value: "flexible", label: "Flexible" },
+  { value: "Weekender", label: "Weekender" },
+  { value: "Aftener", label: "Aftener" },
+  { value: "Hverdage", label: "Hverdage" },
+  { value: "Morgener", label: "Morgener" },
+  { value: "Fleksibel", label: "Fleksibel" },
 ];
 
 const LEVEL_PROGRESS: Record<DanishLevel, string> = {
@@ -245,6 +235,14 @@ function StatCard({ value, label }: { value: string; label: string }) {
   );
 }
 
+function handleFormKeyDown(event: KeyboardEvent<HTMLFormElement>) {
+  const target = event.target as HTMLElement;
+
+  if (event.key === "Enter" && target.tagName !== "TEXTAREA") {
+    event.preventDefault();
+  }
+}
+
 function MyProfile() {
   const { user, updateUser } = useAuth() as AuthContextValue;
   const { messages, getAcceptedMatchesForUser } = useApp() as AppContextValue;
@@ -252,6 +250,7 @@ function MyProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [message, setMessage] = useState("");
   const [openDropdown, setOpenDropdown] = useState<DropdownName | "">("");
+  const [topicInput, setTopicInput] = useState("");
 
   const [formData, setFormData] = useState<ProfileFormData>({
     avatar: "",
@@ -315,6 +314,42 @@ function MyProfile() {
     }));
   }
 
+  function handleAvatarUpload(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData((prev) => ({ ...prev, avatar: String(reader.result) }));
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function addTopic() {
+    const topic = topicInput.trim();
+    if (!topic) return;
+
+    const topics = formData.interests
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+    if (!topics.includes(topic)) {
+      setFormData((prev) => ({
+        ...prev,
+        interests: [...topics, topic].join(", "),
+      }));
+    }
+    setTopicInput("");
+  }
+
+  function removeTopic(topic: string) {
+    const topics = formData.interests
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t && t !== topic);
+    setFormData((prev) => ({ ...prev, interests: topics.join(", ") }));
+  }
+
   function handleDropdownChange(name: DropdownName, value: string) {
     setFormData((prev) => ({
       ...prev,
@@ -340,7 +375,7 @@ function MyProfile() {
     event.preventDefault();
 
     if (!updateUser) {
-      setMessage("Profile editing is not available yet.");
+      setMessage("Profilredigering er ikke tilgængelig endnu.");
       return;
     }
 
@@ -365,7 +400,7 @@ function MyProfile() {
 
     setIsEditing(false);
     setOpenDropdown("");
-    setMessage("Profile updated successfully.");
+    setMessage("Profilen er opdateret.");
   }
 
   return (
@@ -529,198 +564,295 @@ function MyProfile() {
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="mx-auto mt-8 w-full max-w-[520px] rounded-[18px] border border-[#EAE3D8] bg-white p-5 shadow-[0_32px_64px_-24px_rgba(33,30,28,0.40),0_8px_20px_-12px_rgba(33,30,28,0.28)] sm:p-8"
+          onKeyDown={handleFormKeyDown}
+          className="mx-auto mt-8 w-full max-w-5xl"
         >
-          <div className="space-y-4">
-            <fieldset>
-              <legend className="text-[16px] font-extrabold tracking-[-0.01em] text-[#A89F94]">
-                I am
-              </legend>
-              <div className="mt-2 flex rounded-full bg-[#F6F0E8] p-1">
-                {roleOptions.map((option) => {
-                  const isSelected = formData.role.value === option.value;
+          <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleCancel}
+                aria-label="Tilbage"
+                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#EAE3D8] bg-white text-[#2b2a28] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC]"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
 
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      aria-pressed={isSelected}
-                      onClick={() => handleRoleChange(option)}
-                      className={`min-w-0 flex-1 cursor-pointer whitespace-nowrap rounded-full px-2 py-3 text-center text-[11px] font-extrabold transition focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] min-[380px]:text-[12px] sm:px-4 sm:text-[13px] ${
-                        isSelected
-                          ? "bg-[#E63946] text-white shadow-[0_10px_18px_-12px_rgba(230,57,70,0.75)]"
-                          : "text-[#6E665C] hover:bg-[#EFE8DD] active:bg-[#E6DCCF]"
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  );
-                })}
+              <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.02em] text-[#161616]">
+                Rediger profil
+              </h1>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="cursor-pointer rounded-full border border-[#EAE3D8] bg-white px-5 py-2.5 text-sm font-extrabold text-[#6E665C] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px"
+              >
+                Annuller
+              </button>
+
+              <button
+                type="submit"
+                className="cursor-pointer rounded-full bg-[#E63946] px-5 py-2.5 text-sm font-extrabold text-white shadow-[0_14px_24px_-12px_rgba(230,57,70,0.75)] transition hover:bg-[#D62F3C] focus:outline-none focus:ring-4 focus:ring-[#FAD2D5] active:translate-y-px"
+              >
+                Gem profil
+              </button>
+            </div>
+          </header>
+          <div className="space-y-4 sm:space-y-5">
+            <section className="overflow-hidden rounded-[20px] border border-[#EAE3D8] bg-white shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
+              <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
+                Identitet
+              </h3>
+
+              <div className="mt-4 space-y-4">
+                <div className={labelClass}>
+                  Avatar
+                  <div className="mt-2 flex items-center gap-4">
+                    {formData.avatar.startsWith("data:") ? (
+                      <img
+                        src={formData.avatar}
+                        alt="Avatar"
+                        className="h-16 w-16 rounded-full object-cover ring-2 ring-[#E63946]"
+                      />
+                    ) : (
+                      <Avatar
+                        initials={getInitials(formData.name || "?")}
+                        size="lg"
+                        color={user.avatarBgColor}
+                      />
+                    )}
+
+                    <label className="cursor-pointer rounded-full border border-[#EAE3D8] bg-white px-4 py-2.5 text-[13px] font-bold text-[#2b2a28] transition hover:bg-[#FBF7F1]">
+                      Upload billede
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <fieldset>
+                  <legend className={labelClass}>Jeg er</legend>
+                  <div className="mt-2 flex rounded-full bg-[#F6F0E8] p-1">
+                    {roleOptions.map((option) => {
+                      const isSelected = formData.role.value === option.value;
+
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          aria-pressed={isSelected}
+                          onClick={() => handleRoleChange(option)}
+                          className={`min-w-0 flex-1 cursor-pointer whitespace-nowrap rounded-full px-2 py-3 text-center text-[11px] font-extrabold transition focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] min-[380px]:text-[12px] sm:px-4 sm:text-[13px] ${
+                            isSelected
+                              ? "bg-[#E63946] text-white shadow-[0_10px_18px_-12px_rgba(230,57,70,0.75)]"
+                              : "text-[#6E665C] hover:bg-[#EFE8DD] active:bg-[#E6DCCF]"
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label htmlFor="name" className={labelClass}>
+                    Navn
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className={fieldClass}
+                    />
+                  </label>
+
+                  <label htmlFor="email" className={labelClass}>
+                    Email
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className={fieldClass}
+                    />
+                  </label>
+                </div>
+
+                <label className={labelClass}>
+                  By
+                  <div className="mt-2">
+                    <StyledDropdown
+                      name="city"
+                      value={formData.city}
+                      options={cityOptions}
+                      isOpen={openDropdown === "city"}
+                      onToggle={() =>
+                        setOpenDropdown(openDropdown === "city" ? "" : "city")
+                      }
+                      onSelect={handleDropdownChange}
+                      onClose={() => setOpenDropdown("")}
+                    />
+                  </div>
+                </label>
               </div>
-            </fieldset>
+            </section>
 
-            <label htmlFor="name" className={labelClass}>
-              Name
-              <input
-                id="name"
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className={fieldClass}
-              />
-            </label>
+            <section className="mt-8 overflow-hidden rounded-[20px] border border-[#EAE3D8] bg-white shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
+              <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
+                Sprog & tilgængelighed
+              </h3>
 
-            <label htmlFor="email" className={labelClass}>
-              Email
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className={fieldClass}
-              />
-            </label>
+              <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                <label htmlFor="nativeLanguage" className={labelClass}>
+                  Modersmål
+                  <input
+                    id="nativeLanguage"
+                    name="nativeLanguage"
+                    type="text"
+                    value={formData.nativeLanguage}
+                    onChange={handleChange}
+                    className={fieldClass}
+                  />
+                </label>
 
-            <label className={labelClass}>
-              Avatar
-              <div className="mt-2">
-                <StyledDropdown
-                  name="avatar"
-                  value={formData.avatar}
-                  options={avatarOptions}
-                  isOpen={openDropdown === "avatar"}
-                  onToggle={() =>
-                    setOpenDropdown(openDropdown === "avatar" ? "" : "avatar")
-                  }
-                  onSelect={handleDropdownChange}
-                  onClose={() => setOpenDropdown("")}
-                />
+                <label className={labelClass}>
+                  Dansk niveau
+                  <div className="mt-2">
+                    <StyledDropdown
+                      name="danishLevel"
+                      value={formData.danishLevel}
+                      options={danishLevelOptions}
+                      isOpen={openDropdown === "danishLevel"}
+                      onToggle={() =>
+                        setOpenDropdown(
+                          openDropdown === "danishLevel" ? "" : "danishLevel"
+                        )
+                      }
+                      onSelect={handleDropdownChange}
+                      onClose={() => setOpenDropdown("")}
+                    />
+                  </div>
+                </label>
+
+                <label className={labelClass}>
+                  Tilgængelighed
+                  <div className="mt-2">
+                    <StyledDropdown
+                      name="availability"
+                      value={formData.availability}
+                      options={availabilityOptions}
+                      isOpen={openDropdown === "availability"}
+                      onToggle={() =>
+                        setOpenDropdown(
+                          openDropdown === "availability" ? "" : "availability"
+                        )
+                      }
+                      onSelect={handleDropdownChange}
+                      onClose={() => setOpenDropdown("")}
+                    />
+                  </div>
+                </label>
               </div>
-            </label>
+            </section>
 
-            <label className={labelClass}>
-              City
-              <div className="mt-2">
-                <StyledDropdown
-                  name="city"
-                  value={formData.city}
-                  options={cityOptions}
-                  isOpen={openDropdown === "city"}
-                  onToggle={() =>
-                    setOpenDropdown(openDropdown === "city" ? "" : "city")
-                  }
-                  onSelect={handleDropdownChange}
-                  onClose={() => setOpenDropdown("")}
-                />
+            <section className="mt-8 overflow-hidden rounded-[20px] border border-[#EAE3D8] bg-white shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
+              <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
+                Om dig
+              </h3>
+
+              <div className="mt-4 space-y-4">
+                <label htmlFor="learningGoals" className={labelClass}>
+                  Læringsmål
+                  <input
+                    id="learningGoals"
+                    name="learningGoals"
+                    type="text"
+                    value={formData.learningGoals}
+                    onChange={handleChange}
+                    className={fieldClass}
+                  />
+                </label>
+
+                <div className={labelClass}>
+                  Emner du kan lide
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    {formData.interests
+                      .split(",")
+                      .map((t) => t.trim())
+                      .filter(Boolean)
+                      .map((topic) => (
+                        <span
+                          key={topic}
+                          className="flex items-center gap-1.5 rounded-full bg-[#F3EEE7] px-3 py-1.5 text-[13px] font-semibold capitalize text-[#6E665C]"
+                        >
+                          {topic}
+                          <button
+                            type="button"
+                            onClick={() => removeTopic(topic)}
+                            aria-label={`Fjern ${topic}`}
+                            className="cursor-pointer text-[#A89F94] hover:text-[#E63946]"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+
+                    <input
+                      type="text"
+                      value={topicInput}
+                      onChange={(e) => setTopicInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === ",") {
+                          e.preventDefault();
+                          addTopic();
+                        }
+                      }}
+                      onBlur={addTopic}
+                      placeholder="+ Tilføj emne"
+                      className="min-w-[110px] flex-1 rounded-full border border-dashed border-[#D9D0C3] bg-transparent px-3 py-1.5 text-[13px] font-semibold outline-none placeholder:text-[#A89F94] focus:border-[#E63946]"
+                    />
+                  </div>
+                </div>
+
+                <label htmlFor="bio" className={labelClass}>
+                  Bio
+                  <textarea
+                    id="bio"
+                    name="bio"
+                    value={formData.bio}
+                    onChange={handleChange}
+                    rows={4}
+                    maxLength={280}
+                    className={`${fieldClass} min-h-28 resize-y`}
+                  />
+                  <span className="mt-1 block text-right text-[12px] font-semibold text-[#A89F94]">
+                    {formData.bio.length} / 280
+                  </span>
+                </label>
               </div>
-            </label>
-
-            <label className={labelClass}>
-              Danish level
-              <div className="mt-2">
-                <StyledDropdown
-                  name="danishLevel"
-                  value={formData.danishLevel}
-                  options={danishLevelOptions}
-                  isOpen={openDropdown === "danishLevel"}
-                  onToggle={() =>
-                    setOpenDropdown(
-                      openDropdown === "danishLevel" ? "" : "danishLevel"
-                    )
-                  }
-                  onSelect={handleDropdownChange}
-                  onClose={() => setOpenDropdown("")}
-                />
-              </div>
-            </label>
-
-            <label className={labelClass}>
-              Availability
-              <div className="mt-2">
-                <StyledDropdown
-                  name="availability"
-                  value={formData.availability}
-                  options={availabilityOptions}
-                  isOpen={openDropdown === "availability"}
-                  onToggle={() =>
-                    setOpenDropdown(
-                      openDropdown === "availability" ? "" : "availability"
-                    )
-                  }
-                  onSelect={handleDropdownChange}
-                  onClose={() => setOpenDropdown("")}
-                />
-              </div>
-            </label>
-
-            <label htmlFor="nativeLanguage" className={labelClass}>
-              Native language
-              <input
-                id="nativeLanguage"
-                name="nativeLanguage"
-                type="text"
-                value={formData.nativeLanguage}
-                onChange={handleChange}
-                className={fieldClass}
-              />
-            </label>
-
-            <label htmlFor="learningGoals" className={labelClass}>
-              Learning goals
-              <input
-                id="learningGoals"
-                name="learningGoals"
-                type="text"
-                value={formData.learningGoals}
-                onChange={handleChange}
-                className={fieldClass}
-              />
-            </label>
-
-            <label htmlFor="interests" className={labelClass}>
-              Interests
-              <input
-                id="interests"
-                name="interests"
-                type="text"
-                value={formData.interests}
-                onChange={handleChange}
-                placeholder="culture, food, travel"
-                className={fieldClass}
-              />
-            </label>
-
-            <label htmlFor="bio" className={labelClass}>
-              Bio
-              <textarea
-                id="bio"
-                name="bio"
-                value={formData.bio}
-                onChange={handleChange}
-                rows={4}
-                className={`${fieldClass} min-h-28 resize-y`}
-              />
-            </label>
+            </section>
           </div>
-
-          <button
-            type="submit"
-            className="mt-6 w-full cursor-pointer rounded-full bg-[#E63946] px-6 py-3.5 text-[15px] font-extrabold text-white shadow-[0_14px_24px_-12px_rgba(230,57,70,0.75)] transition hover:bg-[#D62F3C] focus:outline-none focus:ring-4 focus:ring-[#FAD2D5] active:translate-y-px"
-          >
-            Save profile
-          </button>
-
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="mt-3 w-full cursor-pointer rounded-full bg-[#ECE6DD] px-6 py-3.5 text-[15px] font-extrabold text-[#6E665C] transition hover:bg-[#F6F0E8] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px"
-          >
-            Cancel
-          </button>
         </form>
       )}
     </main>
