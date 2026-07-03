@@ -22,11 +22,7 @@ export default function MessagesList({ conversations, currentUserId }) {
             onClick={() => navigate(`/messages/${conv.otherUser.id}`)}
             className={`
   flex items-center gap-3 px-4 py-3 cursor-pointer transition-all
-  ${
-    isActive
-      ? "bg-[#FDEAEC] rounded-2xl mx-3 my-2"
-      : "hover:bg-gray-50 rounded-2xl mx-3 my-2"
-  }
+  ${isActive ? "bg-[#FDEAEC] rounded-2xl mx-3 my-2" : "rounded-2xl mx-3 my-2"}
 `}
           >
             <Avatar
