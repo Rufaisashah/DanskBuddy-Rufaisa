@@ -4,10 +4,9 @@ import { useApp } from "../../context/AppContext";
 import { useAuth } from "../../context/AuthContext";
 import MessageBubble from "./MessageBubble";
 import Avatar from "../Shared/Avatar";
-import { ChevronLeft, Phone, Video } from "lucide-react";
+import { ChevronLeft, Phone, Video, Mic, Send } from "lucide-react";
 import "./Messages.css";
 import { avatarColor } from "../../utils/avatarColor";
-import { Mic, Send } from "lucide-react";
 import { getInitials } from "../../utils/getInitials";
 export default function ChatWindow() {
   const { user } = useAuth();
@@ -101,7 +100,7 @@ export default function ChatWindow() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-2 bg-[#F4EFE8]">
+      <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-2 bg-[#FAF6F0]">
         {messages.length === 0 ? (
           <p className="text-center text-neutral text-sm mt-8">
             Ingen beskeder endnu
@@ -119,11 +118,11 @@ export default function ChatWindow() {
 
       {/* Input */}
       <div className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-white border-t border-surface">
-        <button className="w-9 h-9 rounded-full border border-surface flex items-center justify-center text-neutral text-lg bg-background cursor-pointer hover:bg-background transition shrink-0">
+        <button className="w-9 h-9 rounded-full border border-surface flex items-center justify-center text-neutral text-lg bg-[#FAF6F0] cursor-pointer hover:bg-background transition shrink-0">
           +
         </button>
         <input
-          className="flex-1 px-5 py-3 rounded-full bg-background border-none outline-none text-sm text-foreground placeholder:text-neutral-light"
+          className="flex-1 px-5 py-3 rounded-full bg-[#FAF6F0] border-none outline-none text-sm text-foreground placeholder:text-neutral-light"
           value={text}
           placeholder="Skriv på dansk..."
           onChange={(e) => setText(e.target.value)}
@@ -131,7 +130,7 @@ export default function ChatWindow() {
             if (e.key === "Enter") handleSend();
           }}
         />
-        <button className="text-neutral hover:text-foreground transition bg-transparent border-none cursor-pointer">
+        <button className="md:hidden text-neutral hover:text-foreground transition bg-transparent border-none cursor-pointer">
           <Mic size={20} />
         </button>
         <button
