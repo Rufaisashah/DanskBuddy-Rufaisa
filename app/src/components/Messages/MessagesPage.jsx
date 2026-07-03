@@ -85,14 +85,14 @@ export default function MessagesPage() {
   }
 
   return (
-    <div className="flex h-full overflow-hidden bg-background">
+    <div className="flex flex-1 min-h-0 overflow-hidden bg-background">
       {/* ── Left panel — conversation list ── */}
       <div
         className={`${chatOpen ? "hidden md:flex" : "flex"} flex-col w-full md:w-[320px] border-r border-surface bg-white shrink-0`}
       >
         <div className="px-6 pt-6 pb-4 border-b border-surface">
           <h2 className="text-2xl font-bold text-foreground mb-4">Beskeder</h2>
-          <div className="flex items-center gap-2 h-11 bg-[#FAF6F0] border border-[#ece6dd] rounded-full px-4">
+          <div className="flex items-center gap-2 h-11 bg-[#F4EFE8] border border-[#ece6dd] rounded-full px-4">
             <Search size={16} className="text-neutral shrink-0" />
             <input
               placeholder="Søg samtaler..."
@@ -103,7 +103,7 @@ export default function MessagesPage() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto bg-white">
           {filteredConversations.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full gap-3 p-8 text-center">
               <p className="text-4xl">💬</p>
