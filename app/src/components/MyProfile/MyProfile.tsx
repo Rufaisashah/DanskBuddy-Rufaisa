@@ -97,11 +97,17 @@ const readOnlyValueClass =
 const readOnlyRowClass = "flex flex-wrap items-baseline gap-x-2 gap-y-1";
 
 function getFormDataFromUser(user: ProfileUser): ProfileFormData {
+  const rawRole = user.role as unknown;
+  const roleValue: UserRole =
+    typeof rawRole === "object" && rawRole !== null
+      ? ((rawRole as { value: string }).value as UserRole)
+      : (rawRole as UserRole) ?? "learner"; // TODO: this is wuick overengineered fix. Fix all UserRole references and simplify this.
+
   return {
     avatar: user.avatar ?? "",
     name: user.name ?? "",
     email: user.email ?? "",
-    role: user.role ?? "learner",
+    role: roleValue,
     city: user.city ?? "",
     danishLevel: user.danishLevel ?? "",
     nativeLanguage: user.nativeLanguage ?? "",
@@ -120,8 +126,16 @@ function getOptionsWithCurrentValue(options: SelectOption[], value: string) {
   return [{ value, label: value }, ...options];
 }
 
-function getRoleLabel(role: UserRole) {
-  return roleOptions.find((option) => option.value === role)?.label ?? role;
+function getRoleLabel(role: UserRole | unknown): string {
+  const roleValue =
+    typeof role === "object" && role !== null
+      ? (role as { value: string }).value
+      : (role as string); // TODO: this is wuick overengineered fix. Fix all UserRole references and simplify this.
+  return (
+    roleOptions.find((option) => option.value === roleValue)?.label ??
+    roleValue ??
+    "Not set" // TODO: this is wuick overengineered fix. Fix all UserRole references and simplify this.
+  );
 }
 
 function getOptionLabel(options: SelectOption[], value: string) {
@@ -298,11 +312,20 @@ function MyProfile() {
       return;
     }
 
+    const roleLabels: Record<UserRole, string> = {
+      learner: "Lærer dansk",
+      native: "Taler dansk",
+      both: "Both",
+    };
+
     const updatedProfile: Partial<ProfileUser> = {
       avatar: formData.avatar,
       name: formData.name,
       email: formData.email,
-      role: formData.role,
+      role: {
+        value: formData.role,
+        label: roleLabels[formData.role],
+      } as unknown as UserRole, // TODO: this is wuick overengineered fix. Fix all UserRole references and simplify this.
       city: formData.city,
       danishLevel: formData.danishLevel,
       nativeLanguage: formData.nativeLanguage,
