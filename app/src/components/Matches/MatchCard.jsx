@@ -3,9 +3,11 @@ import ReconnectDialog from "./ReconnectDialog";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../../context/AppContext.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { colorFor, initials } from "../../utils/matchCardHelpers";
+import { XIcon, ArrowRightIcon, ArrowLeftIcon } from "./icons";
 
 export default function MatchCard({ match, onAction }) {
-  const { respondToMatch, getUserById, resendMatch } = useApp();
+  const { respondToMatch, getUserById } = useApp();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [status, setStatus] = useState(match.status);
@@ -39,75 +41,7 @@ export default function MatchCard({ match, onAction }) {
   function handleCardClick() {
     navigate(`/profile/${otherUser.id}`);
   }
-  function XIcon({ color }) {
-    return (
-      <svg
-        width="11"
-        height="11"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke={color}
-        strokeWidth="2.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M18 6 6 18M6 6l12 12" />
-      </svg>
-    );
-  }
-  const AVATAR_COLORS = [
-    "#E07A5F",
-    "#5B8DEF",
-    "#9B7EDE",
-    "#E8836B",
-    "#4FB286",
-    "#C97F35",
-  ];
-  function colorFor(id) {
-    let hash = 0;
-    for (const c of String(id)) hash = c.charCodeAt(0) + ((hash << 5) - hash);
-    return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
-  }
-  function initials(name) {
-    if (!name) return "?";
-    const parts = name.trim().split(" ");
-    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-    return (parts[0][0] + parts[1][0]).toUpperCase();
-  }
-  function ArrowRightIcon() {
-    return (
-      <svg
-        width="10"
-        height="10"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#D62F3C"
-        strokeWidth="2.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M5 12h13" />
-        <path d="m12 5 7 7-7 7" />
-      </svg>
-    );
-  }
-  function ArrowLeftIcon() {
-    return (
-      <svg
-        width="10"
-        height="10"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#8A8175"
-        strokeWidth="2.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M19 12H6" />
-        <path d="m12 5-7 7 7 7" />
-      </svg>
-    );
-  }
+
   return (
     <div
       onClick={handleCardClick}
@@ -256,7 +190,10 @@ export default function MatchCard({ match, onAction }) {
           }}
           onConfirm={(e) => {
             e?.stopPropagation?.();
-            resendMatch(match.id, user.id);
+            respondToMatch(match.id, "pending", {
+              requesterId: user.id,
+              receiverId: otherUser.id,
+            });
             setStatus("declined_resent");
             setShowReconnectModal(false);
             onAction(`Request sent again to ${otherUser.name}`);
