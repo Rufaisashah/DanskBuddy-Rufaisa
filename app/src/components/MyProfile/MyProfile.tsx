@@ -3,10 +3,11 @@ import type { ChangeEvent, FormEvent } from "react";
 import Avatar from "../Shared/Avatar";
 import StyledDropdown from "../Shared/StyledDropdown";
 import LevelBadge from "../Shared/LevelBadge";
+import type { Level } from "../Shared/LevelBadge";
 
 import { useAuth } from "../../context/AuthContext";
 
-type UserRole = "learner" | "native" | "both";
+type UserRole = "learner" | "native";
 
 type ProfileUser = {
   id: string;
