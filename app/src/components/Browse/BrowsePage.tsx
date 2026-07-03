@@ -147,7 +147,7 @@ function toProfileCardUser(user: User): ProfileCardUser {
     name: user.name,
     avatar: user.avatar ?? "",
     city: user.city ?? "Unknown city",
-    role: user.role?.value ?? "learner",
+    role: (user.role?.value ?? "learner") as "learner" | "native", // TODO: this is wuick overengineered fix. Fix all UserRole references and simplify this.
     danishLevel: user.danishLevel ?? "Not selected",
     interests: user.interests ?? [],
     bio: user.bio ?? "No bio yet.",
