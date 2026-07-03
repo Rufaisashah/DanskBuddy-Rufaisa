@@ -567,7 +567,7 @@ function MyProfile() {
           onKeyDown={handleFormKeyDown}
           className="mx-auto mt-8 w-full max-w-5xl"
         >
-          <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <header className="-mx-4 -mt-8 mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#EAE3D8] bg-white px-4 py-4 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
             <div className="flex items-center gap-3">
               <button
                 type="button"
