@@ -8,7 +8,7 @@ import EmptyState from "../Shared/EmptyState";
 import StyledDropdown, { type SelectOption } from "../Shared/StyledDropdown";
 import type { User } from "../../types/types";
 import { Search } from "lucide-react";
-
+//* hello*//
 type SendMatchResult =
   | {
       success: true;
@@ -124,6 +124,7 @@ function matchesSearch(user: User, searchTerm: string) {
   }
 
   const name = user.name.toLowerCase();
+
   const interests = user.interests ?? [];
 
   const interestsMatches = interests.some((interests) =>

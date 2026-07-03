@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { translateMessage } from "../../utils/translateMessage";
+import { formatMessageTime } from "../../utils/formatMessageTime";
 
 export default function MessageBubble({ message, isMine }) {
   const [isTranslated, setIsTranslated] = useState(false);
@@ -37,19 +38,30 @@ export default function MessageBubble({ message, isMine }) {
       }
     >
       <div
-        className={`px-4 py-2 rounded-2xl max-w-[70%] text-sm ${
+        className={`px-4 pt-2.5 pb-2 max-w-[70%] text-sm ${
           isMine
-            ? "bg-[#E63946] text-white"
-            : "bg-white text-gray-800 shadow-sm"
+            ? "bg-[#E63946] text-white rounded-t-2xl rounded-bl-2xl rounded-br-sm"
+            : "bg-white text-gray-800 shadow-sm rounded-t-2xl rounded-br-2xl rounded-bl-sm"
         }`}
       >
-        {isTranslated ? translatedText : message?.text}
-      </div>
+        <div className="pr-2">
+          {isTranslated ? translatedText : message?.text}
+        </div>
 
+        {message?.createdAt && (
+          <div
+            className={`text-[11px] text-right mt-1 ${
+              isMine ? "text-white/70" : "text-gray-400"
+            }`}
+          >
+            {formatMessageTime(message.createdAt)}
+          </div>
+        )}
+      </div>
       <button
         onClick={isTranslated ? handleShowOriginal : handleTranslate}
         disabled={isLoading}
-        className="text-[#E63946] text-xs mt-1 font-medium hover:underline"
+        className="text-[#E63946] text-xs font-medium hover:underline"
       >
         {isLoading
           ? "Oversætter..."
@@ -57,8 +69,11 @@ export default function MessageBubble({ message, isMine }) {
             ? "Vis original"
             : "Vis oversættelse"}
       </button>
+
       {error && (
-        <p className="text-red-500 text-xs mt-1">Oversættelse mislykkedes</p>
+        <p className="text-red-500 text-xs mt-1 block mt-1">
+          Oversættelse mislykkedes
+        </p>
       )}
     </div>
   );
