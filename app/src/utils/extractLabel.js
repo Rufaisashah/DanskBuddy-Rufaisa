@@ -1,4 +1,4 @@
-export function safeText(value, fallback = "") {
+export function extractLabel(value, fallback = "") {
   if (value == null) return fallback;
   if (typeof value === "string" || typeof value === "number") return value;
   if (typeof value === "object") {
