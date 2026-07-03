@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import Avatar from "../Shared/Avatar";
 import StyledDropdown from "../Shared/StyledDropdown";
@@ -6,6 +6,7 @@ import LevelBadge from "../Shared/LevelBadge";
 import type { UserRole, DanishLevel } from "../../types/types";
 
 import { useAuth } from "../../context/AuthContext";
+import { useApp } from "../../context/AppContext";
 
 type ProfileUser = {
   id: string;
@@ -27,6 +28,27 @@ type ProfileUser = {
 type AuthContextValue = {
   user: ProfileUser | null;
   updateUser?: (updatedData: Partial<ProfileUser>) => ProfileUser | undefined;
+};
+
+type Message = {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  text: string;
+  createdAt: string;
+};
+
+type Match = {
+  id: string;
+  requesterId: string;
+  receiverId: string;
+  status: "pending" | "accepted" | "declined";
+  createdAt: string;
+};
+
+type AppContextValue = {
+  messages: Record<string, Message[]>;
+  getAcceptedMatchesForUser: (userId: string) => Match[];
 };
 
 type ProfileFormData = {
@@ -174,8 +196,58 @@ function getLanguageName(language: string) {
   return LANGUAGE_NAMES[code] ?? language ?? "English";
 }
 
+function toDayKey(isoDate: string) {
+  return new Date(isoDate).toDateString();
+}
+
+function getActiveDays(
+  messages: Record<string, Message[]>,
+  userId: string
+): Set<string> {
+  const days = new Set<string>();
+
+  for (const conversation of Object.values(messages ?? {})) {
+    for (const message of conversation) {
+      if (message.senderId === userId) {
+        days.add(toDayKey(message.createdAt));
+      }
+    }
+  }
+
+  return days;
+}
+
+function getDayStreak(activeDays: Set<string>) {
+  const day = new Date();
+
+  if (!activeDays.has(day.toDateString())) {
+    day.setDate(day.getDate() - 1);
+  }
+
+  let streak = 0;
+
+  while (activeDays.has(day.toDateString())) {
+    streak += 1;
+    day.setDate(day.getDate() - 1);
+  }
+
+  return streak;
+}
+
+function StatCard({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="rounded-[18px] border border-[#EAE3D8] bg-white px-4 py-5 text-center shadow-[0_14px_28px_-24px_rgba(33,30,28,0.35)]">
+      <p className="text-[22px] font-extrabold leading-none tracking-[-0.02em] text-[#161616]">
+        {value}
+      </p>
+      <p className="mt-2 text-[12px] font-bold text-[#A89F94]">{label}</p>
+    </div>
+  );
+}
+
 function MyProfile() {
   const { user, updateUser } = useAuth() as AuthContextValue;
+  const { messages, getAcceptedMatchesForUser } = useApp() as AppContextValue;
 
   const [isEditing, setIsEditing] = useState(false);
   const [message, setMessage] = useState("");
@@ -201,13 +273,29 @@ function MyProfile() {
     setFormData(getFormDataFromUser(user));
   }, [user]);
 
+  const stats = useMemo(() => {
+    if (!user) {
+      return { partners: 0, sessions: 0, streak: 0 };
+    }
+
+    const activeDays = getActiveDays(messages, user.id);
+
+    return {
+      partners: getAcceptedMatchesForUser(user.id).length,
+      sessions: activeDays.size,
+      streak: getDayStreak(activeDays),
+    };
+  }, [user, messages, getAcceptedMatchesForUser]);
+
   if (!user) {
     return null;
   }
 
   const currentUser = user;
-  const danishLevel = normalizeDanishLevel(currentUser.danishLevel);
   const isNative = currentUser.role?.value === "native";
+  const danishLevel = isNative
+    ? currentUser.danishLevel || "C2"
+    : normalizeDanishLevel(currentUser.danishLevel);
 
   function handleChange(
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -359,6 +447,12 @@ function MyProfile() {
             </div>
           </article>
 
+          <div className="grid grid-cols-3 gap-4">
+            <StatCard value={String(stats.partners)} label="Partners" />
+            <StatCard value={String(stats.sessions)} label="Sessions" />
+            <StatCard value={`${stats.streak} 🔥`} label="Day streak" />
+          </div>
+
           <div className="grid gap-4 lg:grid-cols-2">
             <article className="rounded-[18px] border border-[#EAE3D8] bg-white p-5 shadow-[0_14px_28px_-24px_rgba(33,30,28,0.35)] sm:p-6">
               <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
@@ -366,26 +460,28 @@ function MyProfile() {
               </h3>
 
               <div className="mt-5 space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#E63946] text-[12px] font-extrabold text-white">
-                    DK
-                  </span>
+                {!isNative && (
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#E63946] text-[12px] font-extrabold text-white">
+                      DK
+                    </span>
 
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="truncate text-[15px] font-bold text-[#161616]">
-                        Danish · {isNative ? "native" : "learning"}
-                      </p>
-                      <LevelBadge level={danishLevel} />
-                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="truncate text-[15px] font-bold text-[#161616]">
+                          Danish
+                        </p>
+                        <LevelBadge level={danishLevel} />
+                      </div>
 
-                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EAE3D8]">
-                      <div
-                        className={`h-full rounded-full bg-[#E63946] ${LEVEL_PROGRESS[danishLevel]}`}
-                      />
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EAE3D8]">
+                        <div
+                          className={`h-full rounded-full bg-[#E63946] ${LEVEL_PROGRESS[danishLevel]}`}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 <div className="flex items-center gap-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#FF9665] text-[12px] font-extrabold text-white">
@@ -395,7 +491,7 @@ function MyProfile() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-3">
                       <p className="truncate text-[15px] font-bold text-[#161616]">
-                        {getLanguageName(currentUser.nativeLanguage)} · native
+                        {getLanguageName(currentUser.nativeLanguage)}
                       </p>
 
                       <LevelBadge level="C2" />
