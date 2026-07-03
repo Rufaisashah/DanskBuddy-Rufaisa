@@ -74,11 +74,11 @@ export function AppProvider({ children }) {
   );
 
   const getAllLearners = useCallback(() => {
-    return users.filter((u) => u.role === "learner");
+    return users.filter((u) => u.role?.value === "learner");
   }, [users]);
 
   const getAllNatives = useCallback(() => {
-    return users.filter((u) => u.role === "native");
+    return users.filter((u) => u.role?.value === "native");
   }, [users]);
 
   // ── Match helpers ───────────────────────────────────────────────────────────
@@ -157,8 +157,8 @@ export function AppProvider({ children }) {
     },
     [messages, buildConversationId]
   );
-  const markMessagesAsRead= useCallback((conversationId) => {
-      setMessageReadTimestamps((prev) => ({
+  const markMessagesAsRead = useCallback((conversationId) => {
+    setMessageReadTimestamps((prev) => ({
       ...prev,
       [conversationId]: Date.now(),
     }));

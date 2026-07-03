@@ -86,7 +86,7 @@ export default function Layout() {
                 {user?.name?.split(" ")[0]}
               </span>
               <span className="text-xs text-gray-400 capitalize">
-                {user?.role || "Learner"}
+                {user?.role?.label || "Lærer dansk"}
               </span>
             </div>
           </div>

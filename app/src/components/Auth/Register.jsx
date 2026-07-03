@@ -53,11 +53,15 @@ function Register() {
     const rawPassword = formData.password;
     const hashedPassword = await hashPassword(formData.password);
 
+    const selectedRole =
+      roleOptions.find((option) => option.value === formData.role) ??
+      roleOptions[0];
+
     const registerResult = registerUser({
       name: formData.name,
       email: formData.email,
       password: hashedPassword,
-      role: formData.role,
+      role: selectedRole,
 
       // Default profile fields. User can edit these later.
       avatarBgColor: "#E63946",
