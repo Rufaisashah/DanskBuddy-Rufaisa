@@ -3,11 +3,9 @@ import type { ChangeEvent, FormEvent } from "react";
 import Avatar from "../Shared/Avatar";
 import StyledDropdown from "../Shared/StyledDropdown";
 import LevelBadge from "../Shared/LevelBadge";
-import type { Level } from "../Shared/LevelBadge";
+import type { UserRole, DanishLevel } from "../../types/types";
 
 import { useAuth } from "../../context/AuthContext";
-
-type UserRole = "learner" | "native";
 
 type ProfileUser = {
   id: string;
@@ -15,8 +13,9 @@ type ProfileUser = {
   name: string;
   role: UserRole;
   avatar: string;
+  avatarBgColor?: string;
   city: string;
-  danishLevel: string;
+  danishLevel: DanishLevel | "";
   nativeLanguage: string;
   learningGoals: string;
   interests: string[];
@@ -36,7 +35,7 @@ type ProfileFormData = {
   email: string;
   role: UserRole;
   city: string;
-  danishLevel: string;
+  danishLevel: DanishLevel | "";
   nativeLanguage: string;
   learningGoals: string;
   interests: string;
@@ -51,7 +50,7 @@ type SelectOption<T extends string = string> = {
 
 type DropdownName = "avatar" | "city" | "danishLevel" | "availability";
 
-const roleOptions: SelectOption<UserRole>[] = [
+const roleOptions: UserRole[] = [
   { value: "learner", label: "Lærer dansk" },
   { value: "native", label: "Taler dansk" },
 ];
@@ -73,11 +72,13 @@ const cityOptions: SelectOption[] = [
   { value: "Other", label: "Other" },
 ];
 
-const danishLevelOptions: SelectOption[] = [
-  { value: "beginner", label: "Beginner" },
-  { value: "intermediate", label: "Intermediate" },
-  { value: "advanced", label: "Advanced" },
-  { value: "native", label: "Native" },
+const danishLevelOptions: SelectOption<DanishLevel>[] = [
+  { value: "A1", label: "A1 · Beginner" },
+  { value: "A2", label: "A2 · Elementary" },
+  { value: "B1", label: "B1 · Intermediate" },
+  { value: "B2", label: "B2 · Upper intermediate" },
+  { value: "C1", label: "C1 · Advanced" },
+  { value: "C2", label: "C2 · Native-like" },
 ];
 
 const availabilityOptions: SelectOption[] = [
@@ -87,6 +88,29 @@ const availabilityOptions: SelectOption[] = [
   { value: "mornings", label: "Mornings" },
   { value: "flexible", label: "Flexible" },
 ];
+
+const LEVEL_PROGRESS: Record<DanishLevel, string> = {
+  A1: "w-1/6",
+  A2: "w-2/6",
+  B1: "w-3/6",
+  B2: "w-4/6",
+  C1: "w-5/6",
+  C2: "w-full",
+};
+
+const LANGUAGE_NAMES: Record<string, string> = {
+  EN: "English",
+  DA: "Danish",
+  DE: "German",
+  ES: "Spanish",
+  HI: "Hindi",
+  AR: "Arabic",
+  RU: "Russian",
+  ZH: "Chinese",
+  HR: "Croatian",
+  PL: "Polish",
+  SO: "Somali",
+};
 
 const fieldClass =
   "mt-2 w-full rounded-2xl border border-[#ECE6DD] bg-white px-4 py-3.5 text-[15px] font-semibold text-[#2B2A28] outline-none transition placeholder:text-[#A89F94] focus:border-[#E63946] focus:ring-4 focus:ring-[#FDEAEC]";
@@ -99,7 +123,7 @@ function getFormDataFromUser(user: ProfileUser): ProfileFormData {
     avatar: user.avatar ?? "",
     name: user.name ?? "",
     email: user.email ?? "",
-    role: user.role ?? "learner",
+    role: user.role ?? roleOptions[0],
     city: user.city ?? "",
     danishLevel: user.danishLevel ?? "",
     nativeLanguage: user.nativeLanguage ?? "",
@@ -110,26 +134,8 @@ function getFormDataFromUser(user: ProfileUser): ProfileFormData {
   };
 }
 
-function getOptionsWithCurrentValue(options: SelectOption[], value: string) {
-  if (!value || options.some((option) => option.value === value)) {
-    return options;
-  }
-
-  return [{ value, label: value }, ...options];
-}
-
-function getRoleLabel(role: UserRole) {
-  return roleOptions.find((option) => option.value === role)?.label ?? role;
-}
-
-function getOptionLabel(options: SelectOption[], value: string) {
-  return getOptionsWithCurrentValue(options, value).find(
-    (option) => option.value === value
-  )?.label;
-}
-
-function getAvailabilityLabel(value: string) {
-  return getOptionLabel(availabilityOptions, value) || value;
+function getRoleLabel(role?: UserRole) {
+  return role?.label ?? "Lærer dansk";
 }
 
 function getInitials(name: string) {
@@ -151,26 +157,21 @@ function getMemberSince(createdAt?: string) {
   return Number.isNaN(year) ? "2026" : String(year);
 }
 
-function getDanishLevelLabel(level: string) {
-  return getOptionLabel(danishLevelOptions, level) || level || "Learning";
-}
+function normalizeDanishLevel(level: DanishLevel | ""): DanishLevel {
+  if (level && level in LEVEL_PROGRESS) {
+    return level;
+  }
 
-function getDanishLevelCode(level: string) {
-  if (level === "native") return "C2";
-  if (level === "advanced") return "B2";
-  if (level === "intermediate") return "B1";
-  return "A2";
-}
-
-function getDanishLevelProgressClass(level: string) {
-  if (level === "native") return "w-full";
-  if (level === "advanced") return "w-4/5";
-  if (level === "intermediate") return "w-3/5";
-  return "w-2/5";
+  return "A1";
 }
 
 function getLanguageCode(language: string) {
   return (language || "EN").slice(0, 2).toUpperCase();
+}
+
+function getLanguageName(language: string) {
+  const code = getLanguageCode(language);
+  return LANGUAGE_NAMES[code] ?? language ?? "English";
 }
 
 function MyProfile() {
@@ -184,7 +185,7 @@ function MyProfile() {
     avatar: "",
     name: "",
     email: "",
-    role: "learner",
+    role: roleOptions[0],
     city: "",
     danishLevel: "",
     nativeLanguage: "",
@@ -205,6 +206,8 @@ function MyProfile() {
   }
 
   const currentUser = user;
+  const danishLevel = normalizeDanishLevel(currentUser.danishLevel);
+  const isNative = currentUser.role?.value === "native";
 
   function handleChange(
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -299,7 +302,7 @@ function MyProfile() {
                     <Avatar
                       initials={getInitials(currentUser.name)}
                       size="profile"
-                      color="#E07A5F"
+                      color={currentUser.avatarBgColor}
                     />
                   </div>
 
@@ -371,21 +374,14 @@ function MyProfile() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-3">
                       <p className="truncate text-[15px] font-bold text-[#161616]">
-                        Danish ·{" "}
-                        {getDanishLevelLabel(
-                          currentUser.danishLevel
-                        ).toLowerCase()}
+                        Danish · {isNative ? "native" : "learning"}
                       </p>
-                      <LevelBadge
-                        level={getDanishLevelCode(currentUser.danishLevel)}
-                      />
+                      <LevelBadge level={danishLevel} />
                     </div>
 
                     <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EAE3D8]">
                       <div
-                        className={`h-full rounded-full bg-[#E63946] ${getDanishLevelProgressClass(
-                          currentUser.danishLevel
-                        )}`}
+                        className={`h-full rounded-full bg-[#E63946] ${LEVEL_PROGRESS[danishLevel]}`}
                       />
                     </div>
                   </div>
@@ -399,12 +395,10 @@ function MyProfile() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-3">
                       <p className="truncate text-[15px] font-bold text-[#161616]">
-                        {currentUser.nativeLanguage || "English"} · native
+                        {getLanguageName(currentUser.nativeLanguage)} · native
                       </p>
 
-                      <LevelBadge
-                        level={getDanishLevelCode(currentUser.danishLevel)}
-                      />
+                      <LevelBadge level="C2" />
                     </div>
 
                     <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#EAE3D8]">
@@ -427,7 +421,7 @@ function MyProfile() {
                 ).map((interest) => (
                   <span
                     key={interest}
-                    className="rounded-full bg-[#F3EEE7] px-4 py-2 text-[14px] font-semibold text-[#6E665C]"
+                    className="rounded-full bg-[#F3EEE7] px-4 py-2 text-[14px] font-semibold capitalize text-[#6E665C]"
                   >
                     {interest}
                   </span>
@@ -448,14 +442,14 @@ function MyProfile() {
               </legend>
               <div className="mt-2 flex rounded-full bg-[#F6F0E8] p-1">
                 {roleOptions.map((option) => {
-                  const isSelected = formData.role === option.value;
+                  const isSelected = formData.role.value === option.value;
 
                   return (
                     <button
                       key={option.value}
                       type="button"
                       aria-pressed={isSelected}
-                      onClick={() => handleRoleChange(option.value)}
+                      onClick={() => handleRoleChange(option)}
                       className={`min-w-0 flex-1 cursor-pointer whitespace-nowrap rounded-full px-2 py-3 text-center text-[11px] font-extrabold transition focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] min-[380px]:text-[12px] sm:px-4 sm:text-[13px] ${
                         isSelected
                           ? "bg-[#E63946] text-white shadow-[0_10px_18px_-12px_rgba(230,57,70,0.75)]"
