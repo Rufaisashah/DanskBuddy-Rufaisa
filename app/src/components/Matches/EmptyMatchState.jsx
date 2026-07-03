@@ -88,7 +88,7 @@ export default function EmptyMatchState({ type, onCtaClick }) {
   return (
     <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-gray-200 bg-white px-6 py-8 text-center shadow-sm">
       <div
-        className="mb-1.5 flex h-16 w-16 items-center justify-center rounded-2xl"
+        className="mb-2 flex h-[74px] w-[74px] items-center justify-center rounded-[22px]"
         style={{ background: cfg.iconBg }}
       >
         <Icon color={cfg.iconColor} />
@@ -99,7 +99,7 @@ export default function EmptyMatchState({ type, onCtaClick }) {
       <div className="text-lg font-extrabold tracking-tight text-gray-900">
         {cfg.title}
       </div>
-      <p className="max-w-[230px] text-sm font-medium leading-relaxed text-gray-500">
+      <p className="max-w-[450px] text-sm font-medium leading-relaxed text-gray-500">
         {cfg.body}
       </p>
       {cfg.cta && (
