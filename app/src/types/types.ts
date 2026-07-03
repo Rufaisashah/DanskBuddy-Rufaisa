@@ -15,7 +15,7 @@ export type User = {
   danishLevel?: string;
   nativeLanguage?: string;
   learningGoals?: string[];
-  topics?: string[];
+  interests?: string[];
   availability?: string[];
   bio?: string;
   createdAt?: string;

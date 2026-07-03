@@ -254,7 +254,7 @@ function PublicProfile() {
         <div className="mt-5 grid gap-5 lg:grid-cols-3">
           <ProfileListSection
             title="Interests"
-            items={profileUser.topics}
+            items={profileUser.interests}
             emptyMessage="No interests added yet."
           />
 
