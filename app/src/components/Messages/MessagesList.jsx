@@ -1,34 +1,54 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Avatar from "../Shared/Avatar";
-
-export default function MessagesList({ conversations }) {
+import { avatarColor } from "../../utils/avatarColor";
+import { formatMessageTime } from "../../utils/formatMessageTime";
+import { getInitials } from "../../utils/getInitials";
+export default function MessagesList({ conversations, currentUserId }) {
   const navigate = useNavigate();
+  const { userId } = useParams();
 
   return (
-    <div className="space-y-3">
-      {conversations.map((conversation) => (
-        <div
-          key={conversation.conversationId}
-          onClick={() => navigate(`/messages/${conversation.otherUser.id}`)}
-          className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 transition cursor-pointer"
-        >
-          <Avatar
-            initials={conversation.otherUser.name.charAt(0)}
-            online={true}
-            size="md"
-          />
+    <div className="flex flex-col">
+      {conversations.map((conv) => {
+        const isActive = String(conv.otherUser.id) === String(userId);
+        const preview =
+          String(conv.lastSenderId) === String(currentUserId)
+            ? `Du: ${conv.lastMessage}`
+            : conv.lastMessage || "Start en samtale";
 
-          <div className="flex-1">
-            <h4 className="text-lg font-bold text-gray-900">
-              {conversation.otherUser.name}
-            </h4>
-
-            <p className="text-sm text-gray-500 truncate">
-              {conversation.lastMessage || "Start conversation"}
-            </p>
+        return (
+          <div
+            key={conv.conversationId}
+            onClick={() => navigate(`/messages/${conv.otherUser.id}`)}
+            className={`
+  flex items-center gap-3 px-4 py-3 cursor-pointer transition-all
+  ${isActive ? "bg-[#FDEAEC] rounded-2xl mx-3 my-2" : "rounded-2xl mx-3 my-2"}
+`}
+          >
+            <Avatar
+              initials={getInitials(conv.otherUser.name)}
+              online={true}
+              size="md"
+              color={avatarColor(conv.otherUser.id)}
+            />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-0.5">
+                <p
+                  className={`m-0 text-[0.9rem] font-semibold ${isActive ? "text-primary" : "text-foreground"}`}
+                >
+                  {conv.otherUser.name}
+                </p>
+                <span className="text-[0.7rem] text-neutral ml-2 shrink-0">
+                  {formatMessageTime(conv.lastMessageAt)}
+                </span>
+              </div>
+              <p className="m-0 text-[0.8rem] text-neutral truncate">
+                {preview}
+              </p>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

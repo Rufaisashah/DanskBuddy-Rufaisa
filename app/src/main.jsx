@@ -59,6 +59,7 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+
       {
         path: "/messages",
         element: (
@@ -66,15 +67,12 @@ const router = createBrowserRouter([
             <MessagesPage />
           </ProtectedRoute>
         ),
-      },
-      {
-        path: "/messages/:userId",
-        element: (
-          <ProtectedRoute>
-            <ChatWindow />
-         
-          </ProtectedRoute>
-        ),
+        children: [
+          {
+            path: ":userId",
+            element: <ChatWindow />,
+          },
+        ],
       },
       {
         path: "feed",
