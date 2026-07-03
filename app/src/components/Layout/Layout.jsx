@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useApp } from "../../context/AppContext";
 import { useUnreadCount } from "../../hooks/useUnreadCount";
+import { useState, useRef, useEffect } from "react";
 import {
   Search,
   Users,
@@ -24,6 +24,17 @@ export default function Layout() {
   const isChatRoute = location.pathname.startsWith("/messages");
   const isChatDetailRoute = /^\/messages\/[^/]+$/.test(location.pathname);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setIsUserMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const pendingCount = user ? getPendingMatches(user.id).length : 0;
   const unreadCount = useUnreadCount();
@@ -35,12 +46,16 @@ export default function Layout() {
 
   const navLinks = [
     { to: "/feed", label: "Feed", icon: Home },
-    { to: "/browse", label: "Find partnere", icon: Search },
+    { to: "/browse", label: "Søg", icon: Search },
     { to: "/matches", label: "Matches", icon: Users, badge: pendingCount },
-    { to: "/messages", label: "Chat", icon: MessageCircle, badge: unreadCount },
+    {
+      to: "/messages",
+      label: "Chat",
+      icon: MessageCircle,
+      badge: unreadCount,
+    },
     { to: "/profile/me", label: "Profil", icon: User },
   ];
-
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-[#F4EFE8]">
       {/* ── SIDEBAR — desktop only ── */}
@@ -88,7 +103,7 @@ export default function Layout() {
 
         {/* Bottom — user + menu */}
         {/* Bottom — user + menu */}
-        <div className="relative mt-auto p-3">
+        <div className="relative mt-auto p-3" ref={menuRef}>
           <button
             type="button"
             onClick={() => setIsUserMenuOpen((open) => !open)}
@@ -141,11 +156,12 @@ text-left
           )}
         </div>
       </aside>
-
-      <div className="flex flex-col flex-1 min-h-screen">
+      <div className="flex flex-col flex-1 overflow-hidden">
         <main
           className={
-            isChatRoute ? "flex-1 min-h-0 flex flex-col" : "flex-1 p-6 md:p-8"
+            isChatRoute
+              ? "flex-1 min-h-0 flex flex-col overflow-hidden"
+              : "flex-1 p-6 md:p-8 overflow-y-auto"
           }
         >
           <Outlet />
@@ -154,7 +170,7 @@ text-left
 
       {/* ── BOTTOM TAB BAR — mobile only ── */}
       {!isChatDetailRoute && (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50 px-2">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-between items-center h-16 z-50 px-6">
           {navLinks
             .filter(({ to }) =>
               [
