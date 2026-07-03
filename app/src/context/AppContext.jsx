@@ -63,8 +63,8 @@ export function AppProvider({ children }) {
       ...userData,
     };
     if (newUser.role && typeof newUser.role === "object") {
-  newUser.role = newUser.role.value || newUser.role.label || "learner";
-}
+      newUser.role = newUser.role.value || newUser.role.label || "learner";
+    }
     setUsers((prev) => [...prev, newUser]);
     return newUser;
   }, []);
@@ -108,25 +108,11 @@ export function AppProvider({ children }) {
     [matches]
   );
 
-  const respondToMatch = useCallback((matchId, status) => {
+  const respondToMatch = useCallback((matchId, status, overrides = {}) => {
     setMatches((prev) =>
-      prev.map((m) => (m.id === matchId ? { ...m, status } : m))
+      prev.map((m) => (m.id === matchId ? { ...m, status, ...overrides } : m))
     );
   }, []);
-  const resendMatch = useCallback((matchId, newRequesterId) => {
-  setMatches((prev) =>
-    prev.map((m) =>
-      m.id === matchId
-        ? {
-            ...m,
-            status: "pending",
-            requesterId: newRequesterId,
-            receiverId: m.requesterId === newRequesterId ? m.receiverId : m.requesterId,
-          }
-        : m
-    )
-  );
-}, []);
 
   const getMatchesForUser = useCallback(
     (userId) => {
@@ -245,7 +231,6 @@ export function AppProvider({ children }) {
         getAllNatives,
         sendMatchRequest,
         respondToMatch,
-        resendMatch,
         getMatchesForUser,
         getAcceptedMatchesForUser,
         buildConversationId,
