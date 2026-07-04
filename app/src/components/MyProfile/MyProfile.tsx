@@ -226,7 +226,7 @@ function getDayStreak(activeDays: Set<string>) {
 
 function StatCard({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-[18px] border border-[#EAE3D8] bg-white px-4 py-5 text-center shadow-[0_14px_28px_-24px_rgba(33,30,28,0.35)]">
+    <div className="rounded-[18px] border border-[#EAE3D8] bg-white px-4 py-5 text-center">
       <p className="text-[22px] font-extrabold leading-none tracking-[-0.02em] text-[#161616]">
         {value}
       </p>
@@ -489,7 +489,7 @@ function MyProfile() {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
-            <article className="rounded-[18px] border border-[#EAE3D8] bg-white p-5 shadow-[0_14px_28px_-24px_rgba(33,30,28,0.35)] sm:p-6">
+            <article className="rounded-[18px] border border-[#EAE3D8] bg-white p-5 sm:p-6">
               <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
                 Languages
               </h3>
@@ -540,7 +540,7 @@ function MyProfile() {
               </div>
             </article>
 
-            <article className="rounded-[18px] border border-[#EAE3D8] bg-white p-5 shadow-[0_14px_28px_-24px_rgba(33,30,28,0.35)] sm:p-6">
+            <article className="rounded-[18px] border border-[#EAE3D8] bg-white p-5 sm:p-6">
               <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
                 Interests
               </h3>
