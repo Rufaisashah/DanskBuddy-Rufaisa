@@ -172,10 +172,18 @@ function PublicProfile() {
           <div className="px-5 pb-6 sm:px-7 sm:pb-7">
             <div className="-mt-12 flex flex-col gap-5 sm:-mt-14 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-end">
-                <div className="flex h-24 w-24 items-center justify-center rounded-pill border-4 border-white bg-secondary text-4xl shadow-elevated sm:h-28 sm:w-28">
-                  <span>
-                    {profileUser.avatar || profileUser.name.charAt(0)}
-                  </span>
+                <div className="flex h-24 w-24 overflow-hidden items-center justify-center rounded-pill border-4 border-white bg-secondary text-4xl shadow-elevated sm:h-28 sm:w-28">
+                  {profileUser.avatar?.startsWith("data:image") ? (
+                    <img
+                      src={profileUser.avatar}
+                      alt="Brugeravatar"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span>
+                      {profileUser.avatar || profileUser.name.charAt(0)}
+                    </span>
+                  )}
                 </div>
 
                 <div>
