@@ -27,6 +27,7 @@ export default function MessagesList({ conversations, currentUserId }) {
           >
             <Avatar
               initials={getInitials(conv.otherUser.name)}
+              image={conv.otherUser.avatar}
               online={true}
               size="md"
               color={avatarColor(conv.otherUser.id)}
