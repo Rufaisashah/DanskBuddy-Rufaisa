@@ -322,9 +322,26 @@ function MyProfile() {
 
     const reader = new FileReader();
     reader.onload = () => {
-      setFormData((prev) => ({ ...prev, avatar: String(reader.result) }));
+      const img = new Image();
+      img.onload = () => {
+        const MAX_SIZE = 256;
+        const scale = Math.min(1, MAX_SIZE / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas
+          .getContext("2d")
+          ?.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        setFormData((prev) => ({
+          ...prev,
+          avatar: canvas.toDataURL("image/jpeg", 0.85),
+        }));
+      };
+      img.src = String(reader.result);
     };
     reader.readAsDataURL(file);
+    event.target.value = "";
   }
 
   function addTopic() {
