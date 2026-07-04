@@ -111,16 +111,16 @@ const LEVEL_PROGRESS: Record<DanishLevel, string> = {
 };
 
 const LANGUAGE_NAMES: Record<string, string> = {
-  EN: "English",
-  DA: "Danish",
-  DE: "German",
-  ES: "Spanish",
+  EN: "Engelsk",
+  DA: "Dansk",
+  DE: "Tysk",
+  ES: "Spansk",
   HI: "Hindi",
-  AR: "Arabic",
-  RU: "Russian",
-  ZH: "Chinese",
-  HR: "Croatian",
-  PL: "Polish",
+  AR: "Arabisk",
+  RU: "Russisk",
+  ZH: "Kinesisk",
+  HR: "Kroatisk",
+  PL: "Polsk",
   SO: "Somali",
 };
 
@@ -226,11 +226,13 @@ function getDayStreak(activeDays: Set<string>) {
 
 function StatCard({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-[18px] border border-[#EAE3D8] bg-white px-4 py-5 text-center">
-      <p className="text-[22px] font-extrabold leading-none tracking-[-0.02em] text-[#161616]">
+    <div className="px-2 py-4 text-center sm:rounded-[18px] sm:border sm:border-[#EAE3D8] sm:bg-white sm:px-4 sm:py-5">
+      <p className="text-[19px] font-extrabold leading-none tracking-[-0.02em] text-[#161616] sm:text-[22px]">
         {value}
       </p>
-      <p className="mt-2 text-[12px] font-bold text-[#A89F94]">{label}</p>
+      <p className="mt-1.5 text-[11px] font-bold text-[#A89F94] sm:mt-2 sm:text-[12px]">
+        {label}
+      </p>
     </div>
   );
 }
@@ -404,7 +406,7 @@ function MyProfile() {
   }
 
   return (
-    <main className="-m-8 min-h-[calc(100vh-8rem)] bg-background px-4 py-8 font-sans text-[#2B2A28] sm:px-6 lg:px-10">
+    <main className="-m-8 min-h-[calc(100vh-8rem)]  px-4 py-8 font-sans text-[#2B2A28] sm:px-6 bg-white sm:bg-background lg:px-10">
       <div className="mx-auto w-full max-w-[760px]">
         {message && (
           <p className="mt-5 rounded-2xl border border-[#D7EFE2] bg-success-light px-4 py-3 text-sm font-bold text-success-dark">
@@ -414,11 +416,11 @@ function MyProfile() {
       </div>
 
       {!isEditing ? (
-        <section className="mx-auto mt-8 w-full max-w-[760px] space-y-4 sm:space-y-5">
-          <article className="overflow-hidden rounded-[20px] border border-[#EAE3D8] bg-white shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)]">
+        <section className="mx-auto w-full max-w-[760px] space-y-4 sm:space-y-5">
+          <article className="-mx-4 -mt-8 overflow-hidden border-y border-[#EAE3D8] bg-white sm:shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] sm:mx-0 sm:mt-0 sm:rounded-[20px] sm:border">
             <div className="h-[122px] bg-gradient-to-r from-[#E63946] via-[#F0525D] to-[#FF9665] sm:h-[104px]" />
 
-            <div className="relative px-5 pb-6 pt-0 sm:px-6">
+            <div className="relative px-5 pb-6 pt-0 px-6">
               <div className="-mt-11 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex flex-col items-start">
                   <div className="rounded-full border-4 border-white shadow-[0_12px_24px_-16px_rgba(33,30,28,0.55)]">
@@ -443,12 +445,12 @@ function MyProfile() {
 
                       <span>📍</span>
 
-                      <span>{currentUser.city || "Copenhagen"}, Denmark</span>
+                      <span>{currentUser.city || "København"}, Danmark</span>
 
                       <span className="hidden text-[#A89F94] sm:inline">·</span>
 
-                      <span>
-                        Member since {getMemberSince(currentUser.createdAt)}
+                      <span className="hidden sm:inline">
+                        Medlem siden {getMemberSince(currentUser.createdAt)}
                       </span>
                     </div>
 
@@ -476,22 +478,22 @@ function MyProfile() {
                     <path d="M12 20h9" />
                     <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
                   </svg>
-                  Edit profile
+                  Rediger profil
                 </button>
               </div>
             </div>
           </article>
 
-          <div className="grid grid-cols-3 gap-4">
-            <StatCard value={String(stats.partners)} label="Partners" />
-            <StatCard value={String(stats.sessions)} label="Sessions" />
-            <StatCard value={`${stats.streak} 🔥`} label="Day streak" />
+          <div className="grid grid-cols-3 divide-x divide-[#EAE3D8] overflow-hidden rounded-[14px] border border-[#EAE3D8] bg-white sm:gap-4 sm:divide-x-0 sm:overflow-visible sm:rounded-none sm:border-0 sm:bg-transparent">
+            <StatCard value={String(stats.partners)} label="Partnere" />
+            <StatCard value={String(stats.sessions)} label="Sessioner" />
+            <StatCard value={`${stats.streak} 🔥`} label="Streak" />
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2">
-            <article className="rounded-[18px] border border-[#EAE3D8] bg-white p-5 sm:p-6">
+            <article className="rounded-[18px] border-0 bg-transparent p-0 sm:border sm:border-[#EAE3D8] sm:bg-white p-6">
               <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
-                Languages
+                Sprog
               </h3>
 
               <div className="mt-5 space-y-4">
@@ -504,7 +506,7 @@ function MyProfile() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-3">
                         <p className="truncate text-[15px] font-bold text-[#161616]">
-                          Danish
+                          Dansk
                         </p>
                         <LevelBadge level={danishLevel} />
                       </div>
@@ -540,9 +542,9 @@ function MyProfile() {
               </div>
             </article>
 
-            <article className="rounded-[18px] border border-[#EAE3D8] bg-white p-5 sm:p-6">
+            <article className="rounded-[18px] border-0 bg-transparent p-0 sm:border sm:border-[#EAE3D8] sm:bg-white p-6">
               <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
-                Interests
+                Interesser
               </h3>
 
               <div className="mt-5 flex flex-wrap gap-2.5">
