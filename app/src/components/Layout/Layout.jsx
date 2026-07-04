@@ -119,8 +119,12 @@ transition-all
 text-left
 "
           >
-            {user?.avatar ? (
-              <span className="text-xl">{user.avatar}</span>
+            {user?.avatar?.startsWith("data:image") ? (
+              <img
+                src={user.avatar}
+                alt="Brugeravatar"
+                className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+              />
             ) : (
               <div
                 className="w-10 h-10 rounded-full flex-shrink-0 text-white flex items-center justify-center text-sm font-bold"

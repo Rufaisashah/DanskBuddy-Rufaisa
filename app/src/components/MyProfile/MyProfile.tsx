@@ -443,6 +443,7 @@ function MyProfile() {
                   <div className="rounded-full border-4 border-white shadow-[0_12px_24px_-16px_rgba(33,30,28,0.55)]">
                     <Avatar
                       initials={getInitials(currentUser.name)}
+                      image={currentUser.avatar}
                       size="profile"
                       color={currentUser.avatarBgColor}
                     />
@@ -584,7 +585,7 @@ function MyProfile() {
         <form
           onSubmit={handleSubmit}
           onKeyDown={handleFormKeyDown}
-          className="mx-auto w-full max-w-5xl"
+          className="mx-auto w-full max-w-[760px]"
         >
           <header className="-mx-4 -mt-8 mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#EAE3D8] bg-white px-4 py-4 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
             <div className="flex items-center gap-3">
@@ -639,19 +640,12 @@ function MyProfile() {
                 <div className={labelClass}>
                   Avatar
                   <div className="mt-2 flex items-center gap-4">
-                    {formData.avatar.startsWith("data:") ? (
-                      <img
-                        src={formData.avatar}
-                        alt="Avatar"
-                        className="h-16 w-16 rounded-full object-cover ring-2 ring-[#E63946]"
-                      />
-                    ) : (
-                      <Avatar
-                        initials={getInitials(formData.name || "?")}
-                        size="lg"
-                        color={user.avatarBgColor}
-                      />
-                    )}
+                    <Avatar
+                      initials={getInitials(formData.name || "?")}
+                      image={formData.avatar}
+                      size="profile"
+                      color={user.avatarBgColor}
+                    />
 
                     <label className="cursor-pointer rounded-full border border-[#EAE3D8] bg-white px-4 py-2.5 text-[13px] font-bold text-[#2b2a28] transition hover:bg-[#FBF7F1]">
                       Upload billede
@@ -662,6 +656,17 @@ function MyProfile() {
                         className="hidden"
                       />
                     </label>
+                    {formData.avatar.startsWith("data:") && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFormData((prev) => ({ ...prev, avatar: "" }))
+                        }
+                        className="cursor-pointer text-[13px] font-bold text-[#A89F94] transition hover:text-[#E63946]"
+                      >
+                        Fjern billede
+                      </button>
+                    )}
                   </div>
                 </div>
 
