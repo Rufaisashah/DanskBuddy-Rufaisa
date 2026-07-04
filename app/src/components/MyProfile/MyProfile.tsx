@@ -567,7 +567,7 @@ function MyProfile() {
         <form
           onSubmit={handleSubmit}
           onKeyDown={handleFormKeyDown}
-          className="mx-auto mt-8 w-full max-w-5xl"
+          className="mx-auto w-full max-w-5xl"
         >
           <header className="-mx-4 -mt-8 mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#EAE3D8] bg-white px-4 py-4 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
             <div className="flex items-center gap-3">
@@ -590,7 +590,7 @@ function MyProfile() {
                 </svg>
               </button>
 
-              <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.02em] text-[#161616]">
+              <h1 className="text-[22px] font-extrabold leading-tight tracking-[-0.02em] text-[#161616]">
                 Rediger profil
               </h1>
             </div>
@@ -662,7 +662,7 @@ function MyProfile() {
                           onClick={() => handleRoleChange(option)}
                           className={`min-w-0 flex-1 cursor-pointer whitespace-nowrap rounded-full px-2 py-3 text-center text-[11px] font-extrabold transition focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] min-[380px]:text-[12px] sm:px-4 sm:text-[13px] ${
                             isSelected
-                              ? "bg-[#E63946] text-white shadow-[0_10px_18px_-12px_rgba(230,57,70,0.75)]"
+                              ? "bg-white text-[#2b2a28]] shadow-[0px_1px_3px_rgba(43,42,40,0.16)]"
                               : "text-[#6E665C] hover:bg-[#EFE8DD] active:bg-[#E6DCCF]"
                           }`}
                         >
