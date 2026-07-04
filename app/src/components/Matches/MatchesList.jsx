@@ -67,52 +67,56 @@ export default function MatchesList() {
 
       <h1 className="text-3xl font-bold text-gray-900 mb-6">My Matches</h1>
       <div className="mb-6">
-  {/* Mobile: pill-style tab switcher */}
-  <div className="flex rounded-xl bg-gray-100 p-1 sm:hidden">
-    {tabs.map((tab) => (
-      <button
-        key={tab.id}
-        onClick={() => setActiveTab(tab.id)}
-        className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-sm font-bold transition-colors ${
-          activeTab === tab.id
-            ? "bg-white text-gray-900 shadow-sm"
-            : "text-gray-500"
-        }`}
-      >
-        {tab.label}
-        <span className={activeTab === tab.id ? "text-[#E63946]" : "text-gray-400"}>
-          {tab.count}
-        </span>
-      </button>
-    ))}
-  </div>
+        {/* Mobile: pill-style tab switcher */}
+        <div className="flex rounded-xl bg-gray-100 p-1 sm:hidden">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 text-sm font-bold transition-colors ${
+                activeTab === tab.id
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500"
+              }`}
+            >
+              {tab.label}
+              <span
+                className={
+                  activeTab === tab.id ? "text-[#E63946]" : "text-gray-400"
+                }
+              >
+                {tab.count}
+              </span>
+            </button>
+          ))}
+        </div>
 
-  {/* Desktop: underline-style tabs */}
-  <div className="hidden gap-2 border-b border-gray-200 overflow-x-auto pr-4 sm:flex [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-    {tabs.map((tab) => (
-      <button
-        key={tab.id}
-        onClick={() => setActiveTab(tab.id)}
-        className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
-          activeTab === tab.id
-            ? "border-[#E63946] text-[#E63946]"
-            : "border-transparent text-gray-500 hover:text-gray-700"
-        }`}
-      >
-        {tab.label}
-        <span
-          className={`text-xs px-1.5 py-0.5 rounded-full ${
-            activeTab === tab.id
-              ? "bg-[#E63946]/10 text-[#E63946]"
-              : "bg-gray-100 text-gray-500"
-          }`}
-        >
-          {tab.count}
-        </span>
-      </button>
-    ))}
-  </div>
-</div>
+        {/* Desktop: underline-style tabs */}
+        <div className="hidden gap-2 border-b border-gray-200 overflow-x-auto pr-4 sm:flex [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                activeTab === tab.id
+                  ? "border-[#E63946] text-[#E63946]"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              {tab.label}
+              <span
+                className={`text-xs px-1.5 py-0.5 rounded-full ${
+                  activeTab === tab.id
+                    ? "bg-[#E63946]/10 text-[#E63946]"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                {tab.count}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
       {activeMatches.length === 0 ? (
         <div className="flex justify-center">
           <EmptyMatchState
