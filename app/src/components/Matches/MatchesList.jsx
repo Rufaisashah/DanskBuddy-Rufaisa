@@ -37,8 +37,8 @@ export default function MatchesList() {
     activeTab === "requests"
       ? requests
       : activeTab === "declined"
-      ? declined
-      : connected;
+        ? declined
+        : connected;
 
   return (
     <div className="max-w-5xl mx-auto relative">
@@ -49,17 +49,17 @@ export default function MatchesList() {
       )}
 
       <h1 className="text-3xl font-bold text-gray-900 mb-6">My Matches</h1>
-<div className="flex gap-2 border-b border-gray-200 mb-6 overflow-x-auto pr-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <div className="flex gap-2 border-b border-gray-200 mb-6 overflow-x-auto pr-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {tabs.map((tab) => (
-  <button
-    key={tab.id}
-    onClick={() => setActiveTab(tab.id)}
-    className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
-      activeTab === tab.id
-        ? "border-[#E63946] text-[#E63946]"
-        : "border-transparent text-gray-500 hover:text-gray-700"
-    }`}
-  >
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
+              activeTab === tab.id
+                ? "border-[#E63946] text-[#E63946]"
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
             {tab.label}
             <span
               className={`text-xs px-1.5 py-0.5 rounded-full ${

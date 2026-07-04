@@ -7,11 +7,10 @@ export function useUnreadCount() {
 
   if (!user) return 0;
 
-  
-
   return Object.keys(messages).filter((convId) => {
     const [id1, id2] = convId.split("::");
-    const isMine = String(id1) === String(user.id) || String(id2) === String(user.id);
+    const isMine =
+      String(id1) === String(user.id) || String(id2) === String(user.id);
     if (!isMine) return false;
     const convMessages = messages[convId];
     const lastMessage = convMessages[convMessages.length - 1];
@@ -21,5 +20,4 @@ export function useUnreadCount() {
 
     return new Date(lastMessage.createdAt).getTime() > lastRead;
   }).length;
-  
 }

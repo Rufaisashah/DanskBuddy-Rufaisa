@@ -84,7 +84,9 @@ export default function ChatWindow() {
 
             <span>·</span>
 
-            <Chip variant="subtle">{otherUser.role?.label ?? "Lærer dansk"}</Chip>
+            <Chip variant="subtle">
+              {otherUser.role?.label ?? "Lærer dansk"}
+            </Chip>
 
             <span>·</span>
 

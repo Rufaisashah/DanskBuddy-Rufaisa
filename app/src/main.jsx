@@ -72,7 +72,6 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ChatWindow />
-         
           </ProtectedRoute>
         ),
       },
