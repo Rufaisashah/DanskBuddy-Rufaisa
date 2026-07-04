@@ -1,4 +1,4 @@
-export type Level = "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | "native";
+export type Level = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 
 interface Props {
   level: Level;
@@ -14,7 +14,6 @@ const VARIANT: Record<Level, string> = {
   B2: "bg-primary-light text-primary",
   C1: "bg-primary-pale text-primary-dark",
   C2: "bg-primary-pale text-primary-dark",
-  native: "bg-foreground text-background",
 };
 
 export default function LevelBadge({ level }: Props) {

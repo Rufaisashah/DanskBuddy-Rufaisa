@@ -134,8 +134,9 @@ text-left
               <span className="block text-sm font-semibold text-gray-900 truncate">
                 {user?.name}
               </span>
+
               <span className="block text-xs text-gray-500 truncate">
-                {user?.role?.value || "Learner"}
+                {user?.role?.label || "Lærer dansk"}
                 {user?.danishLevel ? ` · ${user.danishLevel}` : ""}
               </span>
             </div>
