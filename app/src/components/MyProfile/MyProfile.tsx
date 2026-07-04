@@ -417,7 +417,7 @@ function MyProfile() {
 
       {!isEditing ? (
         <section className="mx-auto w-full max-w-[760px] space-y-4 sm:space-y-5">
-          <article className="-mx-4 -mt-8 overflow-hidden border-y border-[#EAE3D8] bg-white sm:shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] sm:mx-0 sm:mt-0 sm:rounded-[20px] sm:border">
+          <article className="-mx-4 -mt-8 overflow-hidden sm:border-y border-[#EAE3D8] bg-white sm:shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] sm:mx-0 sm:mt-0 sm:rounded-[20px] sm:border">
             <div className="h-[122px] bg-gradient-to-r from-[#E63946] via-[#F0525D] to-[#FF9665] sm:h-[104px]" />
 
             <div className="relative px-5 pb-6 pt-0 px-6">
@@ -662,7 +662,7 @@ function MyProfile() {
                           onClick={() => handleRoleChange(option)}
                           className={`min-w-0 flex-1 cursor-pointer whitespace-nowrap rounded-full px-2 py-3 text-center text-[11px] font-extrabold transition focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] min-[380px]:text-[12px] sm:px-4 sm:text-[13px] ${
                             isSelected
-                              ? "bg-white text-[#2b2a28]] shadow-[0px_1px_3px_rgba(43,42,40,0.16)]"
+                              ? "bg-white text-[#2b2a28] shadow-[0px_1px_3px_rgba(43,42,40,0.16)]"
                               : "text-[#6E665C] hover:bg-[#EFE8DD] active:bg-[#E6DCCF]"
                           }`}
                         >

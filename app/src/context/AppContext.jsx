@@ -62,6 +62,9 @@ export function AppProvider({ children }) {
       topics: [],
       ...userData,
     };
+    if (newUser.role && typeof newUser.role === "object") {
+      newUser.role = newUser.role.value || newUser.role.label || "learner";
+    }
     setUsers((prev) => [...prev, newUser]);
     return newUser;
   }, []);
@@ -87,8 +90,9 @@ export function AppProvider({ children }) {
     (requesterId, receiverId) => {
       const exists = matches.some(
         (m) =>
-          (m.requesterId === requesterId && m.receiverId === receiverId) ||
-          (m.requesterId === receiverId && m.receiverId === requesterId)
+          m.status === "pending" &&
+          ((m.requesterId === requesterId && m.receiverId === receiverId) ||
+            (m.requesterId === receiverId && m.receiverId === requesterId))
       );
       if (exists) return { success: false, error: "Already sent." };
       const match = {
@@ -104,9 +108,9 @@ export function AppProvider({ children }) {
     [matches]
   );
 
-  const respondToMatch = useCallback((matchId, status) => {
+  const respondToMatch = useCallback((matchId, status, overrides = {}) => {
     setMatches((prev) =>
-      prev.map((m) => (m.id === matchId ? { ...m, status } : m))
+      prev.map((m) => (m.id === matchId ? { ...m, status, ...overrides } : m))
     );
   }, []);
 

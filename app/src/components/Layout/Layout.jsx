@@ -1,14 +1,40 @@
-import { useState } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useApp } from "../../context/AppContext";
 import { useUnreadCount } from "../../hooks/useUnreadCount";
-import { Search, Users, MessageCircle, Home, User, LogOut } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import {
+  Search,
+  Users,
+  MessageCircle,
+  Home,
+  User,
+  LogOut,
+  MoreVertical,
+} from "lucide-react";
+import { avatarColor } from "../../utils/avatarColor";
+import { getInitials } from "../../utils/getInitials";
 
 export default function Layout() {
   const { user, logout } = useAuth();
   const { getPendingMatches } = useApp();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isChatRoute = location.pathname.startsWith("/messages");
+  const isChatDetailRoute = /^\/messages\/[^/]+$/.test(location.pathname);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setIsUserMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const pendingCount = user ? getPendingMatches(user.id).length : 0;
   const unreadCount = useUnreadCount();
@@ -20,25 +46,29 @@ export default function Layout() {
 
   const navLinks = [
     { to: "/feed", label: "Feed", icon: Home },
-    { to: "/browse", label: "Find partnere", icon: Search },
+    { to: "/browse", label: "Søg", icon: Search },
     { to: "/matches", label: "Matches", icon: Users, badge: pendingCount },
-    { to: "/messages", label: "Chat", icon: MessageCircle, badge: unreadCount },
+    {
+      to: "/messages",
+      label: "Chat",
+      icon: MessageCircle,
+      badge: unreadCount,
+    },
     { to: "/profile/me", label: "Profil", icon: User },
   ];
-
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-[#F4EFE8]">
       {/* ── SIDEBAR — desktop only ── */}
-      <aside className="hidden md:flex flex-col w-56 bg-white border-r border-gray-100 min-h-screen sticky top-0 h-screen">
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#EFE8E1] min-h-screen sticky top-0 h-screen">
         {/* Logo */}
         <NavLink
           to="/browse"
-          className="flex items-center gap-3 px-5 py-5 no-underline"
+          className="flex items-center gap-3 px-6 py-6 no-underline"
         >
           <img
-            src="/icons/dansklogo.png"
+            src="/icons/icon-192.png"
             alt="DanskBuddy logo"
-            className="w-10 h-10"
+            className="w-10 h-10 rounded-[13px] shrink-0"
           />
           <span className="text-xl tracking-tight">
             <span className="font-extrabold text-[#E63946]">dansk</span>
@@ -53,9 +83,9 @@ export default function Layout() {
               key={to}
               to={to}
               className={({ isActive }) =>
-                `relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors no-underline ${
+                `relative flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-colors no-underline ${
                   isActive
-                    ? "bg-[#E63946]/10 text-[#E63946]"
+                    ? "bg-[#FDEBEC] text-[#E63946]"
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`
               }
@@ -71,99 +101,113 @@ export default function Layout() {
           ))}
         </nav>
 
-        {/* Bottom — user + logout */}
-        <div className="px-3 py-4 border-t border-gray-100 group">
-          <div className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700">
+        {/* Bottom — user + menu */}
+        {/* Bottom — user + menu */}
+        <div className="relative mt-auto p-3" ref={menuRef}>
+          <button
+            type="button"
+            onClick={() => setIsUserMenuOpen((open) => !open)}
+            className="
+flex w-full items-center gap-3
+rounded-2xl
+border border-[#EFE8E1]
+bg-white
+px-4 py-3
+shadow-sm
+hover:bg-gray-50
+transition-all
+text-left
+"
+          >
             {user?.avatar ? (
               <span className="text-xl">{user.avatar}</span>
             ) : (
-              <div className="w-8 h-8 rounded-full bg-[#E63946] text-white flex items-center justify-center text-sm font-bold">
-                {user?.name?.[0]}
+              <div
+                className="w-10 h-10 rounded-full flex-shrink-0 text-white flex items-center justify-center text-sm font-bold"
+                style={{ background: avatarColor(user?.id ?? "") }}
+              >
+                {getInitials(user?.name ?? "")}
               </div>
             )}
-            <div className="flex flex-col leading-tight">
-              <span className="font-medium text-gray-900">
-                {user?.name?.split(" ")[0]}
+
+            <div className="flex-1 min-w-0 overflow-hidden">
+              <span className="block text-sm font-semibold text-gray-900 truncate">
+                {user?.name}
               </span>
-              <span className="text-xs text-gray-400 capitalize">
+
+              <span className="block text-xs text-gray-500 truncate">
                 {user?.role?.label || "Lærer dansk"}
+                {user?.danishLevel ? ` · ${user.danishLevel}` : ""}
               </span>
             </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-500
-            hover:text-red-600 hover:bg-red-50 transition-colors w-full text-left
-            opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-          >
-            <LogOut size={16} />
-            Log out
+
+            <MoreVertical size={16} className="text-gray-400 flex-shrink-0" />
           </button>
+
+          {isUserMenuOpen && (
+            <div className="absolute bottom-[calc(100%+10px)] left-3 right-3 rounded-2xl border border-[#EFE8E1] bg-white shadow-lg overflow-hidden">
+              <button
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 px-4 py-3 text-sm text-gray-600 hover:bg-red-50 hover:text-red-600"
+              >
+                <LogOut size={16} />
+                Log out
+              </button>
+            </div>
+          )}
         </div>
       </aside>
-
-      <div className="flex flex-col flex-1 min-h-screen">
-        {/* Mobile top bar */}
-        <div className="md:hidden bg-white border-b border-gray-100 h-14 flex items-center justify-between px-4 sticky top-0 z-50">
-          <NavLink
-            to="/browse"
-            className="flex items-center gap-2 no-underline"
-          >
-            <img
-              src="/icons/dansklogo.png"
-              alt="DanskBuddy logo"
-              className="w-10 h-10"
-            />
-            <span className="text-base tracking-tight">
-              <span className="font-extrabold text-[#E63946]">dansk</span>
-              <span className="font-extrabold text-[#F4A261]">buddy</span>
-            </span>
-          </NavLink>
-          <div className="w-8 h-8 rounded-full bg-[#E63946] text-white flex items-center justify-center text-sm font-bold">
-            {user?.name?.[0]}
-          </div>
-        </div>
-
-        <main className="flex-1 p-6 md:p-8">
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <main
+          className={
+            isChatRoute
+              ? "flex-1 min-h-0 flex flex-col overflow-hidden"
+              : "flex-1 p-6 md:p-8 overflow-y-auto"
+          }
+        >
           <Outlet />
         </main>
-
-        <footer className="text-center text-sm text-gray-400 py-4 border-t bg-white">
-          © 2026 DanskBuddy · Find your Danish conversation partner 🇩🇰
-        </footer>
       </div>
 
       {/* ── BOTTOM TAB BAR — mobile only ── */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50 px-2">
-        {navLinks
-          .filter(({ to }) =>
-            ["/feed", "/matches", "/messages", "/profile/me"].includes(to)
-          )
-          .map(({ to, label, icon: Icon, badge }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                `relative flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg text-xs transition-colors no-underline ${
-                  isActive
-                    ? "text-[#E63946]"
-                    : "text-gray-400 hover:text-gray-700"
-                }`
-              }
-            >
-              <Icon size={22} />
-              {label}
-              {badge > 0 && (
-                <span className="absolute top-0 right-1 bg-[#E63946] text-white text-xs font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-0.5">
-                  {badge}
-                </span>
-              )}
-            </NavLink>
-          ))}
-      </nav>
+      {!isChatDetailRoute && (
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-between items-center h-16 z-50 px-6">
+          {navLinks
+            .filter(({ to }) =>
+              [
+                "/feed",
+                "/browse",
+                "/matches",
+                "/messages",
+                "/profile/me",
+              ].includes(to)
+            )
+            .map(({ to, label, icon: Icon, badge }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  `relative flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg text-xs transition-colors no-underline ${
+                    isActive
+                      ? "text-[#E63946]"
+                      : "text-gray-400 hover:text-gray-700"
+                  }`
+                }
+              >
+                <Icon size={22} />
+                {label}
+                {badge > 0 && (
+                  <span className="absolute top-0 right-1 bg-[#E63946] text-white text-xs font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-0.5">
+                    {badge}
+                  </span>
+                )}
+              </NavLink>
+            ))}
+        </nav>
+      )}
 
       {/* Spacer for mobile tab bar */}
-      <div className="md:hidden h-16" />
+      {!isChatDetailRoute && <div className="md:hidden h-16" />}
     </div>
   );
 }
