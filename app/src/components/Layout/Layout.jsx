@@ -136,7 +136,7 @@ text-left
               </span>
 
               <span className="block text-xs text-gray-500 truncate">
-                {user?.role?.label || "Lærer dansk"}
+                {user?.role?.value || "Learner"}
                 {user?.danishLevel ? ` · ${user.danishLevel}` : ""}
               </span>
             </div>
