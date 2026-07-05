@@ -50,19 +50,18 @@ export default function TopBar({ onSearch }: Props) {
   }
 
   return (
-    <header className=" left-0  right-0 h-[72px] lg:h-[90px] flex items-center justify-between px-4 lg:px-10 bg-white border-b border-[#ebe5dd] z-50">
-      <h1 className="text-xl lg:text-3xl font-bold text-foreground m-0">
+    <header className="left-0 right-0 h-[72px] lg:h-[90px] flex items-center justify-between px-4 lg:px-10 bg-white border-b border-transparent md:border-[#ebe5dd] z-50">
+      <h1 className="text-xl lg:text-3xl font-extrabold text-foreground m-0 tracking-tight">
         Fællesskab
       </h1>
 
       <div className="flex items-center gap-3">
-        {/* Search — desktop only */}
-        <div className="hidden lg:flex items-center gap-2 w-[280px] h-12 bg-[#FAF6F0] border border-[#ece6dd] rounded-full px-5">
-          <Search size={18} className="text-neutral shrink-0" />
+        <div className="hidden lg:flex items-center gap-2 w-[280px] h-12 bg-[#FAF6F0] border border-neutral-100 rounded-full px-5">
+          <Search size={18} className="text-neutral-400 shrink-0" />
           <input
             placeholder="Søg..."
             onChange={(e) => onSearch(e.target.value)}
-            className="flex-1 border-none outline-none bg-transparent font-semibold text-sm text-foreground placeholder:text-neutral-dark"
+            className="flex-1 border-none outline-none bg-transparent font-medium text-sm text-foreground placeholder:text-neutral-400"
           />
         </div>
 
@@ -70,23 +69,23 @@ export default function TopBar({ onSearch }: Props) {
         <div className="relative" ref={ref}>
           <button
             onClick={toggleOpen}
-            className="relative w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-[#FAF6F0]  border border-[#ece6dd] flex items-center justify-center cursor-pointer hover:bg-background transition-colors"
+            className="relative w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-[#FAF6F0] border border-neutral-100 flex items-center justify-center cursor-pointer hover:bg-neutral-100/50 transition-colors"
           >
-            <Bell size={18} className="text-neutral" />
+            <Bell size={18} className="text-neutral-700" />
             {unread > 0 && (
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary border-2 border-white" />
+              <span className="absolute top-2 right-2.5 w-2 h-2 rounded-full bg-[#EA4C61] border border-white" />
             )}
           </button>
 
           {/* Dropdown */}
           {open && (
-            <div className="absolute top-12 right-0 w-[300px] lg:w-[320px] bg-white rounded-2xl shadow-elevated z-50 overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-surface">
+            <div className="absolute top-12 right-0 w-[300px] lg:w-[320px] bg-white rounded-2xl shadow-elevated z-50 overflow-hidden border border-neutral-100">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-50">
                 <h3 className="m-0 text-[0.95rem] font-bold text-foreground">
                   Notifikationer
                 </h3>
                 {unread > 0 && (
-                  <span className="text-xs font-semibold text-primary bg-primary-light px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold text-white bg-[#EA4C61] px-2 py-0.5 rounded-full">
                     {unread} ny
                   </span>
                 )}
@@ -94,7 +93,7 @@ export default function TopBar({ onSearch }: Props) {
 
               <div className="max-h-[360px] overflow-y-auto">
                 {notifications.length === 0 ? (
-                  <div className="px-5 py-8 text-center text-neutral text-sm">
+                  <div className="px-5 py-8 text-center text-neutral-400 text-sm">
                     Ingen notifikationer endnu
                   </div>
                 ) : (
@@ -102,19 +101,17 @@ export default function TopBar({ onSearch }: Props) {
                     <button
                       key={n.id}
                       onClick={() => handleNotificationClick(n.postId)}
-                      className="w-full flex items-start gap-3 px-5 py-3.5 border-b border-surface last:border-b-0 hover:bg-background transition-colors text-left cursor-pointer bg-transparent"
+                      className="w-full flex items-start gap-3 px-5 py-3.5 border-b border-neutral-50 last:border-b-0 hover:bg-neutral-50/50 transition-colors text-left cursor-pointer bg-transparent"
                     >
                       <div
                         className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                          n.type === "like"
-                            ? "bg-primary-light"
-                            : "bg-info-light"
+                          n.type === "like" ? "bg-rose-50" : "bg-sky-50"
                         }`}
                       >
                         {n.type === "like" ? (
-                          <Heart size={15} className="text-primary" />
+                          <Heart size={15} className="text-[#EA4C61]" />
                         ) : (
-                          <MessageCircle size={15} className="text-info" />
+                          <MessageCircle size={15} className="text-sky-500" />
                         )}
                       </div>
                       <div className="flex flex-col gap-0.5 min-w-0">
@@ -124,7 +121,7 @@ export default function TopBar({ onSearch }: Props) {
                             ? " likede dit opslag"
                             : " kommenterede på dit opslag"}
                         </p>
-                        <p className="m-0 text-[0.75rem] text-neutral truncate">
+                        <p className="m-0 text-[0.75rem] text-neutral-400 truncate">
                           "{n.postSnippet}…"
                         </p>
                       </div>

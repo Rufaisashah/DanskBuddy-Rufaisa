@@ -2,7 +2,7 @@ import FindFriendsCard from "./FindFriendsCard";
 
 export default function RightPanel() {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6 w-full">
       <FindFriendsCard />
     </div>
   );

@@ -71,100 +71,109 @@ export default function PostCard({ post }: Props) {
   return (
     <article
       id={`post-${post.id}`}
-      className="bg-white rounded-2xl shadow-card p-6 w-full transition-shadow duration-300"
+      className="bg-white rounded-3xl border border-surface p-5 w-full transition-shadow duration-300"
     >
       {/* Author row */}
-      <div className="flex items-center gap-4 mb-3">
+      <div className="flex items-center gap-3 mb-3">
         <Avatar initials={authorInitials} size="lg" />
         <div className="flex flex-col gap-0.5">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <h4 className="m-0 text-[0.95rem] font-bold text-foreground">
               {post.authorName}
             </h4>
             <LevelBadge level={author?.danishLevel ?? "native"} />
           </div>
-          <span className="text-[0.8rem] text-neutral">
+          <span className="text-[0.8rem] text-neutral-400 font-medium">
             {timeAgo(post.createdAt)}
           </span>
         </div>
       </div>
 
       {/* Content */}
-      <p className="text-[0.95rem] text-foreground leading-relaxed mb-5 mt-2">
+      <p className="text-[0.95rem] text-foreground leading-relaxed font-medium mb-5 mt-2">
         {post.content}
       </p>
 
-      {/* Divider */}
-      <div className="border-t border-surface" />
-
       {/* Actions */}
-      <div className="flex items-center gap-6 py-3">
-        {/* Like */}
-        <div className="relative">
-          <button
-            onClick={() => user && toggleLike(post.id, user.id)}
-            onMouseEnter={() => setShowLikes(true)}
-            onMouseLeave={() => setShowLikes(false)}
-            className="flex items-center gap-1.5 bg-transparent border-none cursor-pointer text-[0.9rem] p-0"
-            style={{
-              color: liked ? "var(--color-primary)" : "var(--color-neutral)",
-              fontWeight: liked ? 600 : 400,
-            }}
-          >
-            {liked ? "❤️" : "♡"} {post.likes.length}
-          </button>
-
-          {/* Likes tooltip */}
-          {showLikes && likedUsers.length > 0 && (
-            <div
+      <div className="flex items-center justify-between py-1 text-neutral-400">
+        <div className="flex items-center gap-6">
+          {/* Like */}
+          <div className="relative">
+            <button
+              onClick={() => user && toggleLike(post.id, user.id)}
               onMouseEnter={() => setShowLikes(true)}
               onMouseLeave={() => setShowLikes(false)}
-              className="absolute bottom-9 left-0 bg-white rounded-xl shadow-elevated flex flex-col gap-2 p-3 min-w-[160px] z-20"
+              className="flex items-center gap-1.5 bg-transparent border-none cursor-pointer text-sm font-semibold p-0 text-neutral-400 hover:text-neutral-600 transition-colors"
+              style={{
+                color: liked ? "#EA4C61" : undefined,
+              }}
             >
-              {likedUsers.map((u: any) => (
-                <div key={u.id} className="flex items-center gap-2.5">
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[0.7rem] font-semibold shrink-0"
-                    style={{ background: avatarColor(String(u.id)) }}
-                  >
-                    {u.name
-                      .split(" ")
-                      .map((p: string) => p[0])
-                      .join("")
-                      .toUpperCase()}
+              <svg
+                xmlns="http://w3.org"
+                fill={liked ? "currentColor" : "none"}
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                />
+              </svg>
+              <span>{post.likes.length}</span>
+            </button>
+
+            {/* Likes tooltip */}
+            {showLikes && likedUsers.length > 0 && (
+              <div
+                onMouseEnter={() => setShowLikes(true)}
+                onMouseLeave={() => setShowLikes(false)}
+                className="absolute bottom-9 left-0 bg-white rounded-xl shadow-elevated flex flex-col gap-2 p-3 min-w-[160px] z-20"
+              >
+                {likedUsers.map((u: any) => (
+                  <div key={u.id} className="flex items-center gap-2.5">
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[0.7rem] font-semibold shrink-0"
+                      style={{ background: avatarColor(String(u.id)) }}
+                    >
+                      {u.name
+                        .split(" ")
+                        .map((p: string) => p[0])
+                        .join("")
+                        .toUpperCase()}
+                    </div>
+                    <span className="text-[0.85rem] font-medium text-foreground">
+                      {u.name.split(" ")[0]}
+                    </span>
                   </div>
-                  <span className="text-[0.85rem] font-medium text-foreground">
-                    {u.name.split(" ")[0]}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Comments toggle */}
+          <button
+            onClick={() => setShowComments(!showComments)}
+            className="flex items-center gap-1.5 bg-transparent border-none cursor-pointer text-sm font-semibold p-0 text-neutral-400 hover:text-neutral-600 transition-colors"
+          >
+            <MessageCircle size={19} strokeWidth={2} />
+            <span>{post.comments?.length ?? 0}</span>
+          </button>
         </div>
 
-        {/* Comments toggle */}
-        <button
-          onClick={() => setShowComments(!showComments)}
-          className="flex items-center gap-1.5 bg-transparent border-none cursor-pointer text-[0.9rem] p-0"
-          style={{
-            color: showComments
-              ? "var(--color-foreground)"
-              : "var(--color-neutral)",
-          }}
-        >
-          <MessageCircle size={18} strokeWidth={2} />
-          {post.comments?.length ?? 0}
-        </button>
-
         {/* Translate */}
-        <button className="flex items-center gap-1.5 bg-transparent  text-primary font-bold  border-none cursor-pointer text-[0.85rem] text-neutral p-0">
-          🌐 Oversæt
+
+        <button className="flex items-center gap-1 bg-transparent text-[#EA4C61] hover:text-rose-600 font-bold border-none cursor-pointer text-sm p-0 transition-colors">
+          <span className="text-[11px] font-medium opacity-80">文A</span>{" "}
+          Oversæt
         </button>
       </div>
 
       {/* Comments section */}
       {showComments && (
-        <div className="border-t border-surface pt-4 mt-1">
+        <div className="border-t border-neutral-100 pt-4 mt-3">
           {/* Comment input */}
           <div className="flex gap-2.5 mb-4">
             <input
@@ -174,11 +183,11 @@ export default function PostCard({ post }: Props) {
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleComment();
               }}
-              className="flex-1 h-[46px] rounded-full bg-white border-none outline-none px-4 text-[0.9rem] text-foreground placeholder:text-neutral-light"
+              className="flex-1 h-[42px] rounded-full bg-neutral-50 border border-neutral-100 outline-none px-4 text-[0.9rem] text-foreground placeholder:text-neutral-400"
             />
             <button
               onClick={handleComment}
-              className="h-[46px] px-5 rounded-full bg-primary text-white text-[0.85rem] font-semibold border-none cursor-pointer hover:bg-primary-dark transition-colors"
+              className="h-[42px] px-5 rounded-full bg-[#EA4C61] text-white text-sm font-semibold border-none cursor-pointer hover:bg-opacity-90 transition-all"
             >
               Send
             </button>
@@ -187,7 +196,7 @@ export default function PostCard({ post }: Props) {
           {/* Comment list */}
           <div className="flex flex-col gap-3">
             {post.comments?.length === 0 && (
-              <p className="text-[0.85rem] text-neutral-light">
+              <p className="text-[0.85rem] text-neutral-400">
                 Ingen kommentarer endnu
               </p>
             )}
@@ -203,11 +212,11 @@ export default function PostCard({ post }: Props) {
                     .join("")
                     .toUpperCase()}
                 </div>
-                <div className="bg-background rounded-2xl px-4 py-2 max-w-[80%]">
-                  <p className="text-[0.8rem] font-semibold m-0 mb-0.5 text-foreground">
+                <div className="bg-neutral-50 rounded-2xl px-4 py-2 max-w-[80%] border border-neutral-100/50">
+                  <p className="text-[0.8rem] font-bold m-0 mb-0.5 text-foreground">
                     {comment.authorName}
                   </p>
-                  <p className="text-[0.85rem] m-0 text-neutral">
+                  <p className="text-[0.85rem] m-0 text-neutral-700 font-medium">
                     {comment.text}
                   </p>
                 </div>

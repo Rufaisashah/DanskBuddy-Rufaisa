@@ -23,13 +23,12 @@ export default function FindFriendsCard() {
   const { users } = useApp() as { users: any[] };
   const { user } = useAuth() as { user: any };
 
-  // Show up to 3 users that aren't the current user
   const suggestions = users
     .filter((u) => String(u.id) !== String(user?.id))
     .slice(0, 3);
 
   return (
-    <div className="bg-white rounded-2xl shadow-card p-6">
+    <div className="bg-white rounded-2xl shadow-card p-4">
       <h3 className="text-[0.95rem] font-bold text-foreground mb-1">
         Foreslåede sprogpartnere
       </h3>
@@ -37,7 +36,7 @@ export default function FindFriendsCard() {
       {suggestions.map((friend) => (
         <div
           key={friend.id}
-          className="flex items-center justify-between py-3 border-b border-surface last:border-b-0 last:pb-0"
+          className="flex items-center justify-between py-3 border-b border-transparent last:border-b-0 last:pb-0"
         >
           <div className="flex items-center gap-3">
             <div
