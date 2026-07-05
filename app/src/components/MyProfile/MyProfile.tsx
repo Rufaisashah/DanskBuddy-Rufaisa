@@ -481,7 +481,7 @@ function MyProfile() {
                 <button
                   type="button"
                   onClick={handleEdit}
-                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#EAE3D8] bg-white px-5 py-3 text-[13px] font-bold text-[#2b2a28] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px sm:mt-14"
+                  className="inline-flex whitespace-nowrap shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#EAE3D8] bg-white px-5 py-3 text-[13px] font-bold text-[#2b2a28] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px sm:mt-14"
                 >
                   <svg
                     aria-hidden="true"
