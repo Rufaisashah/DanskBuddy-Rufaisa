@@ -50,7 +50,7 @@ export default function TopBar({ onSearch }: Props) {
   }
 
   return (
-    <header className="left-0 right-0 h-[72px] lg:h-[90px] flex items-center justify-between px-4 lg:px-10 bg-white border-b border-transparent md:border-[#ebe5dd] z-50">
+    <header className="left-0 right-0 h-[72px] lg:h-[90px] flex items-center justify-between px-4 lg:px-6 bg-white border-b border-transparent md:border-[#ebe5dd] z-50">
       <h1 className="text-xl lg:text-3xl font-extrabold text-foreground m-0 tracking-tight">
         Fællesskab
       </h1>

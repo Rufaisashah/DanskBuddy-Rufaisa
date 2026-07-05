@@ -1,15 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useApp } from "../../context/AppContext";
 import { useAuth } from "../../context/AuthContext";
 import Avatar from "../Shared/Avatar";
 import LevelBadge from "../Shared/LevelBadge";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Trash2 } from "lucide-react";
 import type { Post } from "./Post";
+import { translateMessage } from "../../utils/translateMessage";
 
 interface Props {
   post: Post;
 }
-
 const AVATAR_COLORS = [
   "#9B7EDE",
   "#F59E0B",
@@ -18,6 +18,7 @@ const AVATAR_COLORS = [
   "#F4A261",
   "#E63946",
 ];
+
 function avatarColor(id: string) {
   let hash = 0;
   for (let i = 0; i < id.length; i++)
@@ -35,19 +36,67 @@ function timeAgo(date: string) {
   const m = Math.floor(diffDays / 30);
   return m === 1 ? "for 1 måned siden" : `for ${m} måneder siden`;
 }
-
 export default function PostCard({ post }: Props) {
-  const { toggleLike, addComment, users } = useApp() as any;
+  const { toggleLike, addComment, users, deletePost } = useApp() as any;
   const { user } = useAuth() as any;
   const author = users.find((u: any) => String(u.id) === String(post.authorId));
   const [text, setText] = useState("");
   const [showComments, setShowComments] = useState(false);
   const [showLikes, setShowLikes] = useState(false);
 
+  // Translation States
+  const [isTranslated, setIsTranslated] = useState(false);
+  const [translatedText, setTranslatedText] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const liked = user && post.likes.includes(user.id);
   const likedUsers = post.likes
     .map((id) => users.find((u: any) => String(u.id) === String(id)))
     .filter(Boolean);
+
+  // Global Click-Away Error Listener
+  useEffect(() => {
+    if (!error) return;
+
+    const handleGlobalClick = () => {
+      setError(null);
+    };
+
+    const timeoutId = setTimeout(() => {
+      window.addEventListener("click", handleGlobalClick);
+    }, 10);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener("click", handleGlobalClick);
+    };
+  }, [error]);
+
+  async function handleTranslate() {
+    if (translatedText) {
+      setIsTranslated(true);
+      setError(null);
+      return;
+    }
+    setError(null);
+    setIsLoading(true);
+    try {
+      const translated = await translateMessage(post.content);
+      setTranslatedText(translated);
+      setIsTranslated(true);
+    } catch (err) {
+      console.error("Translation failed:", err);
+      setError("Oversættelse mislykkedes");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  function handleShowOriginal() {
+    setIsTranslated(false);
+    setError(null);
+  }
 
   function handleComment() {
     const value = text.trim();
@@ -67,7 +116,6 @@ export default function PostCard({ post }: Props) {
     .map((p) => p.charAt(0))
     .join("")
     .toUpperCase();
-
   return (
     <article
       id={`post-${post.id}`}
@@ -87,11 +135,20 @@ export default function PostCard({ post }: Props) {
             {timeAgo(post.createdAt)}
           </span>
         </div>
+        {user && String(user.id) === String(post.authorId) && (
+          <button
+            onClick={() => deletePost(post.id, user.id)}
+            className="ml-auto bg-transparent border-none cursor-pointer text-neutral-300 hover:text-red-500 transition-colors p-1"
+            aria-label="Delete post"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* Content */}
       <p className="text-[0.95rem] text-foreground leading-relaxed font-medium mb-5 mt-2">
-        {post.content}
+        {isTranslated ? translatedText : post.content}
       </p>
 
       {/* Actions */}
@@ -140,12 +197,12 @@ export default function PostCard({ post }: Props) {
                     >
                       {u.name
                         .split(" ")
-                        .map((p: string) => p[0])
+                        .map((p: string) => p)
                         .join("")
                         .toUpperCase()}
                     </div>
                     <span className="text-[0.85rem] font-medium text-foreground">
-                      {u.name.split(" ")[0]}
+                      {u.name.split(" ")}
                     </span>
                   </div>
                 ))}
@@ -163,13 +220,25 @@ export default function PostCard({ post }: Props) {
           </button>
         </div>
 
-        {/* Translate */}
-
-        <button className="flex items-center gap-1 bg-transparent text-[#EA4C61] hover:text-rose-600 font-bold border-none cursor-pointer text-sm p-0 transition-colors">
-          <span className="text-[11px] font-medium opacity-80">文A</span>{" "}
-          Oversæt
-        </button>
+        {/* Translate block with click event isolation container */}
+        <div onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={isTranslated ? handleShowOriginal : handleTranslate}
+            disabled={isLoading}
+            className="flex items-center gap-1 bg-transparent text-[#EA4C61] hover:text-rose-600 font-bold border-none cursor-pointer text-sm p-0 transition-colors disabled:opacity-50"
+          >
+            <span className="text-[11px] font-medium opacity-80">文A</span>{" "}
+            {isLoading
+              ? "Oversætter..."
+              : isTranslated
+                ? "Vis original"
+                : "Oversæt"}
+          </button>
+        </div>
       </div>
+      {error && (
+        <p className="text-red-500 text-xs mt-2 block text-right">{error}</p>
+      )}
 
       {/* Comments section */}
       {showComments && (
@@ -204,19 +273,19 @@ export default function PostCard({ post }: Props) {
               <div key={comment.id} className="flex items-start gap-2.5">
                 <div
                   className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-white text-[0.7rem] font-semibold shrink-0"
-                  style={{ background: avatarColor(comment.authorId) }}
+                  style={{ background: avatarColor(String(comment.authorId)) }}
                 >
                   {comment.authorName
                     .split(" ")
-                    .map((n: string) => n[0])
+                    .map((p: string) => p)
                     .join("")
                     .toUpperCase()}
                 </div>
-                <div className="bg-neutral-50 rounded-2xl px-4 py-2 max-w-[80%] border border-neutral-100/50">
-                  <p className="text-[0.8rem] font-bold m-0 mb-0.5 text-foreground">
+                <div className="flex flex-col bg-neutral-50 rounded-2xl px-3.5 py-2 max-w-[85%]">
+                  <span className="text-[0.8rem] font-bold text-foreground mb-0.5">
                     {comment.authorName}
-                  </p>
-                  <p className="text-[0.85rem] m-0 text-neutral-700 font-medium">
+                  </span>
+                  <p className="text-[0.85rem] text-gray-700 leading-normal m-0 font-medium">
                     {comment.text}
                   </p>
                 </div>
