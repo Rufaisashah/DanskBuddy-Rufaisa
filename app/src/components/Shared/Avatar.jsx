@@ -23,7 +23,7 @@ export default function Avatar({
   color = AVATAR_COLOR,
 }) {
   return (
-    <div className="relative inline-flex">
+    <div className="relative inline-flex align-top">
       {isImageAvatar(image) ? (
         <img
           src={image}
