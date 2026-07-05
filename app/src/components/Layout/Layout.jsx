@@ -57,7 +57,7 @@ export default function Layout() {
     { to: "/profile/me", label: "Profil", icon: User },
   ];
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-[#F4EFE8]">
+    <div className="min-h-screen flex flex-col md:flex-row bg-white">
       {/* ── SIDEBAR — desktop only ── */}
       <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#EFE8E1] min-h-screen sticky top-0 h-screen">
         {/* Logo */}
@@ -162,7 +162,7 @@ text-left
           className={
             isChatRoute
               ? "flex-1 min-h-0 flex flex-col overflow-hidden"
-              : "flex-1 p-6 md:p-8 overflow-y-auto"
+              : "flex-1 p-6 md:p-8 bg-white"
           }
         >
           <Outlet />
