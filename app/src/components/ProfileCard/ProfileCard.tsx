@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import type { ReactNode } from "react";
+import { avatarColor } from "../../utils/avatarColor";
+import { getInitials } from "../../utils/getInitials";
 
 type UserRole = "learner" | "native";
 
@@ -31,9 +33,12 @@ function ProfileCard({
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-3xl">
-          {user.avatar}
-        </div>
+        <div
+  className="flex h-16 w-16 items-center justify-center rounded-full text-white text-xl font-bold"
+  style={{ backgroundColor: avatarColor(user.id) }}
+>
+  {user.avatar || getInitials(user.name)}
+</div>
 
         <div className="flex-1">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
