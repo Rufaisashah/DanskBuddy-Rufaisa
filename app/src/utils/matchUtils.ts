@@ -24,7 +24,7 @@ export function getConnectButtonLabel(match: Match | undefined) {
   }
 
   if (match.status === "accepted") {
-    return "Connected";
+    return "Connect";
   }
 
   return "Connect";
