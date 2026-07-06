@@ -159,12 +159,12 @@ export default function Layout() {
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* 2. UPDATED THIS MAIN TAG to remove padding for Matches route */}
         <main
-          className={
+          className={ 
             isChatRoute
               ? "flex-1 min-h-0 flex flex-col overflow-hidden"
               : isMatchesRoute
               ? "flex-1 flex flex-col min-h-0" // No padding here for Matches
-              : "flex-1 p-6 md:p-8 bg-white"   // Padding remains for Feed/Browse
+              : "flex-1 p-6 md:p-8 bg-surface-alt"   // Padding remains for Feed/Browse
           }
         >
           <Outlet />

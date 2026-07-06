@@ -306,7 +306,7 @@ function BrowsePage() {
   }
 
   return (
-    <main className="-m-8 min-h-[calc(100vh-8rem)] bg-background font-sans">
+    <main className="-m-8 min-h-[calc(100vh-8rem)] bg-surface-alt font-sans">
       <section
         aria-label="Search and filter"
         className="relative z-20 w-full overflow-visible border-b border-surface bg-white px-4 py-4 sm:px-6 lg:px-8"

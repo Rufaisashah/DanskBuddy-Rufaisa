@@ -20,6 +20,7 @@ import Register from "./components/Auth/Register.jsx";
 import FeedPage from "./components/Feed/FeedPage.tsx";
 import MyProfile from "./components/MyProfile/MyProfile.tsx";
 import PublicProfile from "./components/PublicProfile/PublicProfile.tsx";
+import { Toaster } from "react-hot-toast";
 import "./main.css";
 function Placeholder({ name }) {
   return (
@@ -109,7 +110,10 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AppProvider>
-      <RouterProvider router={router} />
+      <>
+        <Toaster position="top-center" reverseOrder={true} />
+        <RouterProvider router={router} />
+      </>
     </AppProvider>
   </React.StrictMode>
 );

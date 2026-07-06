@@ -4,6 +4,7 @@ import Avatar from "../Shared/Avatar";
 import StyledDropdown from "../Shared/StyledDropdown";
 import LevelBadge from "../Shared/LevelBadge";
 import type { UserRole, DanishLevel } from "../../types/types";
+import toast from "react-hot-toast";
 
 import { useAuth } from "../../context/AuthContext";
 import { useApp } from "../../context/AppContext";
@@ -250,7 +251,6 @@ function MyProfile() {
   const { messages, getAcceptedMatchesForUser } = useApp() as AppContextValue;
 
   const [isEditing, setIsEditing] = useState(false);
-  const [message, setMessage] = useState("");
   const [openDropdown, setOpenDropdown] = useState<DropdownName | "">("");
   const [topicInput, setTopicInput] = useState("");
 
@@ -379,13 +379,11 @@ function MyProfile() {
 
   function handleEdit() {
     setFormData(getFormDataFromUser(currentUser));
-    setMessage("");
     setIsEditing(true);
   }
 
   function handleCancel() {
     setIsEditing(false);
-    setMessage("");
     setOpenDropdown("");
     setFormData(getFormDataFromUser(currentUser));
   }
@@ -394,7 +392,7 @@ function MyProfile() {
     event.preventDefault();
 
     if (!updateUser) {
-      setMessage("Profilredigering er ikke tilgængelig endnu.");
+      toast.error("Profilredigering er ikke tilgængelig endnu.");
       return;
     }
 
@@ -419,19 +417,11 @@ function MyProfile() {
 
     setIsEditing(false);
     setOpenDropdown("");
-    setMessage("Profilen er opdateret.");
+    toast.success("Profilen er opdateret.");
   }
 
   return (
-    <main className="-m-8 min-h-[calc(100vh-8rem)]  px-4 py-8 font-sans text-[#2B2A28] sm:px-6 bg-white sm:bg-background lg:px-10">
-      <div className="mx-auto w-full">
-        {message && (
-          <p className="mt-5 rounded-2xl border border-[#D7EFE2] bg-success-light px-4 py-3 text-sm font-bold text-success-dark">
-            {message}
-          </p>
-        )}
-      </div>
-
+    <main className="-m-8 min-h-[calc(100vh-8rem)]  px-4 py-8 font-sans text-[#2B2A28] sm:px-6 bg-white sm:bg-surface-alt lg:px-10">
       {!isEditing ? (
         <section className="mx-auto w-full space-y-4 sm:space-y-5">
           <article className="-mx-4 -mt-8 overflow-hidden sm:border-y border-[#EAE3D8] bg-white sm:shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] sm:mx-0 sm:mt-0 sm:rounded-[20px] sm:border">
@@ -593,7 +583,7 @@ function MyProfile() {
                 type="button"
                 onClick={handleCancel}
                 aria-label="Tilbage"
-                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#EAE3D8] bg-white text-[#2b2a28] transition bg-[#fbf6ef] hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC]"
+                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#EAE3D8] text-[#2b2a28] transition bg-[#fbf6ef] hover:bg-white focus:outline-none focus:ring-4 focus:ring-[#FDEAEC]"
               >
                 <svg
                   viewBox="0 0 24 24"
