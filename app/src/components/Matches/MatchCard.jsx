@@ -23,14 +23,14 @@ export default function MatchCard({ match, onAction }) {
     e.stopPropagation();
     respondToMatch(match.id, "accepted");
     setStatus("accepted");
-    onAction(`You're now connected with ${otherUser.name}`);
+    onAction(`Du er nu forbundet med ${otherUser.name}`);
   }
 
   function handleDecline(e) {
     e.stopPropagation();
     respondToMatch(match.id, "declined");
     setStatus("declined");
-    onAction(`You declined ${otherUser.name}'s request`);
+    onAction(`Du afviste ${otherUser.name}s anmodning`);
   }
 
   function handleMessage(e) {
@@ -73,7 +73,7 @@ export default function MatchCard({ match, onAction }) {
               )}
             </h3>
             {status === "accepted" ? (
-              <p className="text-xs font-semibold text-[#2E9C6A]">Active now</p>
+              <p className="text-xs font-semibold text-[#2E9C6A]">Aktiv nu</p>
             ) : (
               <p className="text-xs text-gray-400">
                 {otherUser.city} · {otherUser.danishLevel}
@@ -91,7 +91,7 @@ export default function MatchCard({ match, onAction }) {
             }`}
           >
             {isReceiver ? <ArrowRightIcon /> : <ArrowLeftIcon />}
-            {isReceiver ? "Received" : "Sent"}
+            {isReceiver ? "Modtaget" : "Sendt"}
           </span>
         )}
 
@@ -113,7 +113,7 @@ export default function MatchCard({ match, onAction }) {
               >
                 <path d="M20 5H4a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v3l4-3h9a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1Z" />
               </svg>
-              <span className="hidden sm:inline">Message</span>
+              <span className="hidden sm:inline">Besked</span>
             </button>
           </div>
         )}
@@ -144,7 +144,7 @@ export default function MatchCard({ match, onAction }) {
             }
           >
             <XIcon color={isReceiver ? "#8A8175" : "#C97F35"} />
-            {isReceiver ? "You declined" : `${otherUser.name} declined`}
+            {isReceiver ? "Du afviste" : `${otherUser.name} afviste`}
           </span>
 
           {isReceiver && (
@@ -155,7 +155,7 @@ export default function MatchCard({ match, onAction }) {
               }}
               className="rounded-[10px] border-[1.5px] border-[#F4C9CD] bg-[#FDEAEC] px-[13px] py-[7px] text-[13px] font-extrabold text-[#D62F3C]"
             >
-              Send request again
+              Send anmodning igen
             </button>
           )}
         </div>
@@ -167,13 +167,13 @@ export default function MatchCard({ match, onAction }) {
             onClick={handleAccept}
             className="flex-1 bg-[#E63946] hover:bg-[#d62d3a] text-white text-sm font-medium px-3 py-2 rounded-xl"
           >
-            ✓ Accept
+            ✓ Accepter
           </button>
           <button
             onClick={handleDecline}
             className="flex-1 border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium px-3 py-2 rounded-xl"
           >
-            Decline
+            Afvis
           </button>
         </div>
       )}
@@ -181,14 +181,14 @@ export default function MatchCard({ match, onAction }) {
       {status === "pending" && !isReceiver && (
         <div className="flex gap-4 items-center">
           <span className="text-[13px] font-extrabold px-[13px] py-[8px] rounded-[11px] border border-[#F0DEB4] bg-[#FBF1DE] text-[#C97F35]">
-            ⏱ Waiting for reply
+            ⏱ Afventer svar
           </span>
 
           <button
             onClick={handleDecline}
             className="text-[13px] font-extrabold px-[13px] py-[8px] rounded-[11px] border border-[#f0deb4ac] bg-[#fbf1de34] text-[#7C756B]"
           >
-            Withdraw
+            Træk tilbage
           </button>
         </div>
       )}
@@ -208,7 +208,7 @@ export default function MatchCard({ match, onAction }) {
             });
             setStatus("declined_resent");
             setShowReconnectModal(false);
-            onAction(`Request sent again to ${otherUser.name}`);
+            onAction(`Anmodning sendt igen til ${otherUser.name}`);
           }}
         />
       )}
