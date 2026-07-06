@@ -31,9 +31,9 @@ export default function MatchesList() {
   const declined = allMatches.filter((m) => m.status === "declined");
 
   const tabs = [
-    { id: "requests", label: "Requests", count: requests.length },
-    { id: "declined", label: "Declined", count: declined.length },
-    { id: "connected", label: "Connected", count: connected.length },
+    { id: "requests", label: "Anmodninger", count: requests.length },
+    { id: "declined", label: "Afvist", count: declined.length },
+    { id: "connected", label: "Forbundet", count: connected.length },
   ];
 
   const activeMatches =
@@ -71,7 +71,7 @@ export default function MatchesList() {
           )}
 
        <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-gray-900">
-  My Matches
+  Mine matches
 </h1>
           
           <div>
@@ -126,7 +126,7 @@ export default function MatchesList() {
 
       {/* --- CONTENT SECTION: Beige on Desktop, White on Mobile --- */}
       <div className="w-full flex-1 bg-white sm:bg-[#FAF6F0]">
-        <div className="mx-auto max-w-5xl px-6 py-6 sm:px-10 sm:py-10">
+       <div className="px-6 pt-6 md:px-8 md:pt-8 max-w-5xl relative">
           {activeMatches.length === 0 ? (
             <div className="flex justify-center">
               <EmptyMatchState
