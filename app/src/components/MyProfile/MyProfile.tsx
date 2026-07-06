@@ -577,7 +577,7 @@ function MyProfile() {
           onKeyDown={handleFormKeyDown}
           className="mx-auto w-full"
         >
-          <header className="-mx-4 -mt-8 mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#EAE3D8] bg-white px-4 py-4 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
+          <header className="-mx-4 -mt-8 mb-6 flex inset-x-0 z-100 flex-wrap items-center justify-between gap-3 border-b border-[#EAE3D8] bg-white px-4 py-4 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
             <div className="flex items-center gap-3">
               <button
                 type="button"
@@ -621,7 +621,7 @@ function MyProfile() {
             </div>
           </header>
           <div className="space-y-4 sm:space-y-5">
-            <section className="overflow-hidden rounded-[20px] border border-[#EAE3D8] bg-white shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
+            <section className="overflow-hidden rounded-[20px] sm:border border-[#EAE3D8] bg-white sm:shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
               <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
                 Identitet
               </h3>
@@ -732,7 +732,7 @@ function MyProfile() {
               </div>
             </section>
 
-            <section className="mt-8 overflow-hidden rounded-[20px] border border-[#EAE3D8] bg-white shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
+            <section className="mt-8 overflow-hidden rounded-[20px] sm:border border-[#EAE3D8] bg-white sm:shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
               <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
                 Sprog & tilgængelighed
               </h3>
@@ -790,7 +790,7 @@ function MyProfile() {
               </div>
             </section>
 
-            <section className="mt-8 overflow-hidden rounded-[20px] border border-[#EAE3D8] bg-white shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
+            <section className="mt-8 overflow-hidden rounded-[20px] sm:border border-[#EAE3D8] bg-white sm:shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
               <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
                 Om dig
               </h3>

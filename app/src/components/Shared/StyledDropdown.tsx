@@ -141,7 +141,7 @@ export default function StyledDropdown<DName extends string>({
               onClick={() => handleSelect(option.value)}
               className={`flex w-full cursor-pointer items-center justify-between whitespace-nowrap rounded-xl px-3.5 py-2.5 text-left text-sm font-semibold transition ${
                 isSelected
-                  ? "bg-primary-pale text-primary-dark"
+                  ? "bg-surface-alt text-foreground"
                   : "text-neutral hover:bg-surface-alt hover:text-foreground"
               }`}
             >
