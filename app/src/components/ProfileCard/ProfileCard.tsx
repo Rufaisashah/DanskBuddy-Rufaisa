@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import type { ReactNode } from "react";
+import { avatarColor } from "../../utils/avatarColor";
+import { getInitials } from "../../utils/getInitials";
 
 type UserRole = "learner" | "native";
 
@@ -31,7 +33,10 @@ function ProfileCard({
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-100 text-3xl">
+        <div
+          className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full text-white text-xl font-bold"
+          style={{ backgroundColor: avatarColor(user.id) }}
+        >
           {user.avatar.startsWith("data:image") ? (
             <img
               src={user.avatar}
@@ -39,7 +44,7 @@ function ProfileCard({
               className="h-full w-full object-cover"
             />
           ) : (
-            user.avatar || user.name.charAt(0).toUpperCase()
+            user.avatar || getInitials(user.name)
           )}
         </div>
 

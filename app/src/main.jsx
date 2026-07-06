@@ -17,6 +17,7 @@ import ChatWindow from "./components/Messages/ChatWindow.jsx";
 import MessagesPage from "./components/Messages/MessagesPage.jsx";
 import BrowsePage from "./components/Browse/BrowsePage.tsx";
 import Register from "./components/Auth/Register.jsx";
+import FeedPage from "./components/Feed/FeedPage.tsx";
 import MyProfile from "./components/MyProfile/MyProfile.tsx";
 import PublicProfile from "./components/PublicProfile/PublicProfile.tsx";
 import "./main.css";
@@ -78,7 +79,7 @@ const router = createBrowserRouter([
         path: "feed",
         element: (
           <ProtectedRoute>
-            <Placeholder name="Feed" />
+            <FeedPage />
           </ProtectedRoute>
         ),
       },

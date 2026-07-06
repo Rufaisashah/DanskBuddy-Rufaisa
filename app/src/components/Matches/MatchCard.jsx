@@ -23,14 +23,14 @@ export default function MatchCard({ match, onAction }) {
     e.stopPropagation();
     respondToMatch(match.id, "accepted");
     setStatus("accepted");
-    onAction(`You're now connected with ${otherUser.name}`);
+    onAction(`Du er nu forbundet med ${otherUser.name}`);
   }
 
   function handleDecline(e) {
     e.stopPropagation();
     respondToMatch(match.id, "declined");
     setStatus("declined");
-    onAction(`You declined ${otherUser.name}'s request`);
+    onAction(`Du afviste ${otherUser.name}s anmodning`);
   }
 
   function handleMessage(e) {
@@ -45,25 +45,31 @@ export default function MatchCard({ match, onAction }) {
   return (
     <div
       onClick={handleCardClick}
-      className="relative bg-white border border-gray-200 rounded-md p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow flex flex-col h-full"
+      className="relative bg-white border border-gray-200 rounded-2xl p-5 shadow-sm cursor-pointer hover:shadow-md transition-shadow flex flex-col gap-3"
     >
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex items-center gap-3">
-          {otherUser.avatar?.startsWith("data:image") ? (
-            <img
-              src={otherUser.avatar}
-              alt=""
-              className="w-10 h-10 rounded-full object-cover"
-            />
-          ) : (
-            <div
-              className="w-10 h-10 rounded-full text-white flex items-center justify-center font-bold"
-              style={{ backgroundColor: colorFor(otherUser.id) }}
-            >
-              {initials(otherUser.name)}
-            </div>
-          )}
-          <div>
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="relative flex-none">
+            {otherUser.avatar?.startsWith("data:image") ? (
+              <img
+                src={otherUser.avatar}
+                alt=""
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            ) : (
+              <div
+                className="w-10 h-10 rounded-full text-white flex items-center justify-center font-bold"
+                style={{ backgroundColor: colorFor(otherUser.id) }}
+              >
+                {initials(otherUser.name)}
+              </div>
+            )}
+
+            {status === "accepted" && (
+              <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#34C77B] border-2 border-white" />
+            )}
+          </div>
+          <div className="min-w-0">
             <h3 className="flex items-center gap-2 font-semibold text-gray-900">
               {otherUser.name}
               {status === "accepted" && (
@@ -75,32 +81,63 @@ export default function MatchCard({ match, onAction }) {
                 </span>
               )}
             </h3>
-            <p className="text-xs text-gray-400">
-              {otherUser.city} · {otherUser.danishLevel}
-            </p>
+            {status === "accepted" ? (
+              <p className="text-xs font-semibold text-[#2E9C6A]">Aktiv nu</p>
+            ) : (
+              <p className="text-xs text-gray-400">
+                {otherUser.city} · {otherUser.danishLevel}
+              </p>
+            )}
           </div>
         </div>
 
         {status === "pending" && (
           <span
-            className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
+            className={`inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full ${
               isReceiver
                 ? "bg-[#E63946]/10 text-[#E63946]"
                 : "bg-[#F1ECE3] text-[#8A8175]"
             }`}
           >
             {isReceiver ? <ArrowRightIcon /> : <ArrowLeftIcon />}
-            {isReceiver ? "Received" : "Sent"}
+            {isReceiver ? "Modtaget" : "Sendt"}
           </span>
+        )}
+
+        {status === "accepted" && (
+          <div className="flex gap-2.5 flex-none">
+            <button
+              onClick={handleMessage}
+              className="flex items-center gap-1.5 rounded-lg bg-[#E63946] px-2 py-2 text-sm font-bold text-white sm:px-4"
+            >
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="3.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20 5H4a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v3l4-3h9a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1Z" />
+              </svg>
+              <span className="hidden sm:inline">Besked</span>
+            </button>
+          </div>
         )}
       </div>
 
-      <p className="text-sm text-gray-500 mb-3 flex-1">{otherUser.bio}</p>
+      {status === "pending" && (
+        <p className="hidden sm:block text-xs text-gray-400">
+          {otherUser.interests?.slice(0, 3).join(" · ")}
+        </p>
+      )}
 
       {status === "declined" && (
-        <div className="mt-auto flex flex-col items-start gap-[9px] pt-[13px]">
+        <div className="flex flex-row items-start gap-[9px] min-h-[40px]">
           <span
-            className="inline-flex items-center gap-[6px] rounded-[10px] border px-[12px] py-[7px] text-[12.5px] font-extrabold"
+            className="inline-flex items-center gap-[2px] rounded-[8px] border px-[5px] py-[6px] text-[12.5px] font-extrabold"
             style={
               isReceiver
                 ? {
@@ -116,7 +153,7 @@ export default function MatchCard({ match, onAction }) {
             }
           >
             <XIcon color={isReceiver ? "#8A8175" : "#C97F35"} />
-            {isReceiver ? "You declined" : `${otherUser.name} declined`}
+            {isReceiver ? "Du afviste" : `${otherUser.name} afviste`}
           </span>
 
           {isReceiver && (
@@ -127,68 +164,44 @@ export default function MatchCard({ match, onAction }) {
               }}
               className="rounded-[10px] border-[1.5px] border-[#F4C9CD] bg-[#FDEAEC] px-[13px] py-[7px] text-[13px] font-extrabold text-[#D62F3C]"
             >
-              Send request again
+              Send anmodning igen
             </button>
           )}
         </div>
       )}
+
       {status === "pending" && isReceiver && (
         <div className="flex gap-2">
           <button
             onClick={handleAccept}
-            className="flex-1 bg-[#E63946] hover:bg-[#d62d3a] text-white text-sm font-medium px-3 py-2 rounded-full"
+            className="flex-1 bg-[#E63946] hover:bg-[#d62d3a] text-white text-sm font-medium px-3 py-2 rounded-xl"
           >
-            ✓ Accept
+            ✓ Accepter
           </button>
           <button
             onClick={handleDecline}
-            className="flex-1 border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium px-3 py-2 rounded-full"
+            className="flex-1 border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium px-3 py-2 rounded-xl"
           >
-            Decline
+            Afvis
           </button>
         </div>
       )}
 
       {status === "pending" && !isReceiver && (
-        <div className="flex gap-2 items-center">
-          <span className="bg-amber-50 text-amber-700 text-sm font-medium px-3 py-1.5 rounded-full">
-            ⏱ Waiting for reply
+        <div className="flex gap-4 items-center">
+          <span className="text-[13px] font-extrabold px-[13px] py-[8px] rounded-[11px] border border-[#F0DEB4] bg-[#FBF1DE] text-[#C97F35]">
+            ⏱ Afventer svar
           </span>
+
           <button
             onClick={handleDecline}
-            className="border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium px-3 py-1.5 rounded-full"
+            className="text-[13px] font-extrabold px-[13px] py-[8px] rounded-[11px] border border-[#f0deb4ac] bg-[#fbf1de34] text-[#7C756B]"
           >
-            Withdraw
+            Træk tilbage
           </button>
         </div>
       )}
 
-      {status === "accepted" && (
-        <div className="mt-auto flex items-center gap-2 pt-3">
-          <span className="text-[12.5px] font-semibold text-[#2E9C6A]">
-            Active now
-          </span>
-
-          <button
-            onClick={handleMessage}
-            className="ml-auto flex items-center gap-1.5 rounded-lg bg-[#E63946] px-4 py-2 text-sm font-bold text-white"
-          >
-            <svg
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#fff"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M20 5H4a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v3l4-3h9a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1Z" />
-            </svg>
-            Message
-          </button>
-        </div>
-      )}
       {showReconnectModal && (
         <ReconnectDialog
           name={otherUser.name}
@@ -204,7 +217,7 @@ export default function MatchCard({ match, onAction }) {
             });
             setStatus("declined_resent");
             setShowReconnectModal(false);
-            onAction(`Request sent again to ${otherUser.name}`);
+            onAction(`Anmodning sendt igen til ${otherUser.name}`);
           }}
         />
       )}
