@@ -313,7 +313,7 @@ function BrowsePage() {
       >
         <div className="relative mx-auto w-full max-w-7xl overflow-visible">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.02em] text-[#161616]">
+            <h1 className="text-3xl font-bold leading-tight tracking-[-0.02em] text-[#161616]">
               Hvem vil du møde?
             </h1>
             <label

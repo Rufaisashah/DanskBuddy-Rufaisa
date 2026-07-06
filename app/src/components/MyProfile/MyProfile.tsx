@@ -598,7 +598,7 @@ function MyProfile() {
                 </svg>
               </button>
 
-              <h1 className="text-[22px] font-extrabold leading-tight tracking-[-0.02em] text-[#161616]">
+              <h1 className="text-3xl font-bold leading-tight tracking-[-0.02em] text-[#161616]">
                 Rediger profil
               </h1>
             </div>

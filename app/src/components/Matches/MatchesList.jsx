@@ -45,11 +45,9 @@ export default function MatchesList() {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      
       {/* --- HEADER SECTION: White, Full Width --- */}
       <div className="w-full border-b border-gray-200 bg-white">
         <div className="max-w-5xl px-6 pt-6 sm:pl-6 sm:pr-10 sm:pt-10 relative">
-          
           {toast && (
             <div className="fixed left-1/2 top-6 z-[100] flex -translate-x-1/2 items-center gap-[8px] rounded-full bg-[#2B2A28] px-[6px] py-[6px] text-[13px] font-semibold text-white shadow-[0_12px_24px_-8px_rgba(43,42,40,0.5)]">
               <span className="flex h-[18px] w-[18px] flex-none items-center justify-center rounded-full bg-[#34C77B]">
@@ -70,10 +68,10 @@ export default function MatchesList() {
             </div>
           )}
 
-       <h1 className="mb-6 text-3xl font-extrabold tracking-tight text-gray-900">
-  Mine matches
-</h1>
-          
+          <h1 className="mb-6 text-3xl font-bold tracking-tight text-gray-900">
+            Mine matches
+          </h1>
+
           <div>
             {/* Mobile: pill-style tab switcher */}
             <div className="mb-6 flex rounded-[12px] bg-[#F1ECE3] p-[3px] sm:hidden">
@@ -88,7 +86,11 @@ export default function MatchesList() {
                   }`}
                 >
                   {tab.label}
-                  <span className={activeTab === tab.id ? "text-[#E63946]" : "text-gray-400"}>
+                  <span
+                    className={
+                      activeTab === tab.id ? "text-[#E63946]" : "text-gray-400"
+                    }
+                  >
                     {tab.count}
                   </span>
                 </button>
@@ -126,7 +128,7 @@ export default function MatchesList() {
 
       {/* --- CONTENT SECTION: Beige on Desktop, White on Mobile --- */}
       <div className="w-full flex-1 bg-white sm:bg-[#FAF6F0]">
-       <div className="px-6 pt-6 md:px-8 md:pt-8 max-w-5xl relative">
+        <div className="px-6 pt-6 md:px-8 md:pt-8 max-w-5xl relative">
           {activeMatches.length === 0 ? (
             <div className="flex justify-center">
               <EmptyMatchState
@@ -143,7 +145,6 @@ export default function MatchesList() {
           )}
         </div>
       </div>
-
     </div>
   );
 }
