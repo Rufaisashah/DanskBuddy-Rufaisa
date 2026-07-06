@@ -122,7 +122,7 @@ export default function Layout() {
             ) : (
               <div
                 className="w-10 h-10 rounded-full flex-shrink-0 text-white flex items-center justify-center text-sm font-bold"
-                style={{ background: avatarColor(user?.id ?? "") }}
+                style={{ background: user?.avatarBgColor || avatarColor(user?.id ?? "") }}
               >
                 {getInitials(user?.name ?? "")}
               </div>
