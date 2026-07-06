@@ -126,7 +126,7 @@ const LANGUAGE_NAMES: Record<string, string> = {
 };
 
 const fieldClass =
-  "mt-2 w-full rounded-2xl border border-[#ECE6DD] bg-white px-4 py-3.5 text-[15px] font-semibold text-[#2B2A28] outline-none transition placeholder:text-[#A89F94] focus:border-[#E63946] focus:ring-4 focus:ring-[#FDEAEC]";
+  "mt-2 w-full rounded-xl border border-[#ECE6DD] bg-white px-4 py-2.5 text-[15px] font-semibold text-[#2B2A28] outline-none transition placeholder:text-[#A89F94] focus:border-[#E63946] focus:ring-4 focus:ring-[#FDEAEC]";
 
 const labelClass =
   "block text-[12px] font-extrabold tracking-[-0.01em] text-[#6E665C]";
@@ -583,7 +583,7 @@ function MyProfile() {
                 type="button"
                 onClick={handleCancel}
                 aria-label="Tilbage"
-                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#EAE3D8] text-[#2b2a28] transition bg-[#fbf6ef] hover:bg-white focus:outline-none focus:ring-4 focus:ring-[#FDEAEC]"
+                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-[#EAE3D8] text-[#2b2a28] transition bg-[#fbf6ef] hover:bg-white focus:outline-none focus:ring-4 focus:ring-[#FDEAEC]"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -607,14 +607,14 @@ function MyProfile() {
               <button
                 type="button"
                 onClick={handleCancel}
-                className="cursor-pointer rounded-full border border-[#EAE3D8] bg-white px-5 py-2.5 text-sm font-extrabold text-[#6E665C] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px"
+                className="cursor-pointer rounded-xl border border-[#EAE3D8] bg-white px-5 py-2.5 text-sm font-extrabold text-[#6E665C] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px"
               >
                 Annuller
               </button>
 
               <button
                 type="submit"
-                className="cursor-pointer rounded-full bg-[#E63946] px-5 py-2.5 text-sm font-extrabold text-white shadow-[0_14px_24px_-12px_rgba(230,57,70,0.75)] transition hover:bg-[#D62F3C] focus:outline-none focus:ring-4 focus:ring-[#FAD2D5] active:translate-y-px"
+                className="cursor-pointer rounded-xl bg-[#E63946] px-5 py-2.5 text-sm font-extrabold text-white shadow-[0_14px_24px_-12px_rgba(230,57,70,0.75)] transition hover:bg-[#D62F3C] focus:outline-none focus:ring-4 focus:ring-[#FAD2D5] active:translate-y-px"
               >
                 Gem profil
               </button>
@@ -844,7 +844,7 @@ function MyProfile() {
                       }}
                       onBlur={addTopic}
                       placeholder="+ Tilføj emne"
-                      className="min-w-[110px] flex-1 rounded-full border border-dashed border-[#D9D0C3] bg-transparent px-3 py-1.5 text-[13px] font-semibold outline-none placeholder:text-[#A89F94] focus:border-[#E63946]"
+                      className="min-w-[110px] flex-1 rounded-full border border-dashed border-[#D9D0C3] bg-transparent px-3 py-2 text-[13px] font-semibold outline-none placeholder:text-[#A89F94] focus:border-[#E63946]"
                     />
                   </div>
                 </div>

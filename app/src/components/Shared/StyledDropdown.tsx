@@ -160,7 +160,7 @@ export default function StyledDropdown<DName extends string>({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         onClick={onToggle}
-        className="flex h-11 w-full cursor-pointer items-center justify-between gap-2 rounded-pill border border-surface bg-white px-4 text-left text-sm font-semibold text-foreground outline-none transition hover:bg-surface-alt focus:border-primary focus:ring-4 focus:ring-primary-pale"
+        className="flex h-11 w-full cursor-pointer items-center justify-between gap-2 rounded-xl border border-surface bg-white px-4 text-left text-sm font-semibold text-foreground outline-none transition hover:bg-surface-alt focus:border-primary focus:ring-4 focus:ring-primary-pale"
       >
         <span>{selectedOption.label}</span>
 
