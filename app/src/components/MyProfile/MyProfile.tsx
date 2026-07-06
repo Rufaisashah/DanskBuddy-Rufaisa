@@ -424,7 +424,7 @@ function MyProfile() {
 
   return (
     <main className="-m-8 min-h-[calc(100vh-8rem)]  px-4 py-8 font-sans text-[#2B2A28] sm:px-6 bg-white sm:bg-background lg:px-10">
-      <div className="mx-auto w-full max-w-[760px]">
+      <div className="mx-auto w-full">
         {message && (
           <p className="mt-5 rounded-2xl border border-[#D7EFE2] bg-success-light px-4 py-3 text-sm font-bold text-success-dark">
             {message}
@@ -433,7 +433,7 @@ function MyProfile() {
       </div>
 
       {!isEditing ? (
-        <section className="mx-auto w-full max-w-[760px] space-y-4 sm:space-y-5">
+        <section className="mx-auto w-full space-y-4 sm:space-y-5">
           <article className="-mx-4 -mt-8 overflow-hidden sm:border-y border-[#EAE3D8] bg-white sm:shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] sm:mx-0 sm:mt-0 sm:rounded-[20px] sm:border">
             <div className="h-[122px] bg-gradient-to-r from-[#E63946] via-[#F0525D] to-[#FF9665] sm:h-[104px]" />
 
@@ -585,7 +585,7 @@ function MyProfile() {
         <form
           onSubmit={handleSubmit}
           onKeyDown={handleFormKeyDown}
-          className="mx-auto w-full max-w-[760px]"
+          className="mx-auto w-full"
         >
           <header className="-mx-4 -mt-8 mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#EAE3D8] bg-white px-4 py-4 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
             <div className="flex items-center gap-3">
@@ -593,7 +593,7 @@ function MyProfile() {
                 type="button"
                 onClick={handleCancel}
                 aria-label="Tilbage"
-                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#EAE3D8] bg-white text-[#2b2a28] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC]"
+                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#EAE3D8] bg-white text-[#2b2a28] transition bg-[#fbf6ef] hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC]"
               >
                 <svg
                   viewBox="0 0 24 24"
