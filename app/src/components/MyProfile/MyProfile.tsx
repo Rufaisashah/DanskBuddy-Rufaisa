@@ -603,7 +603,7 @@ function MyProfile() {
               </h1>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="hidden items-center gap-3 sm:flex">
               <button
                 type="button"
                 onClick={handleCancel}
@@ -866,6 +866,22 @@ function MyProfile() {
                 </label>
               </div>
             </section>
+          </div>
+          <div className="fixed inset-x-0 bottom-0 z-100 flex gap-3 border-t border-[#EAE3D8] bg-white px-4 py-3 sm:hidden">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="flex-1 cursor-pointer rounded-[13px] border border-[#EAE3D8] bg-white px-5 py-3 text-sm font-extrabold text-[#6E665C] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px"
+            >
+              Annuller
+            </button>
+
+            <button
+              type="submit"
+              className="flex-1 cursor-pointer rounded-[13px] bg-[#E63946] px-5 py-3 text-sm font-extrabold text-white shadow-[0_14px_24px_-12px_rgba(230,57,70,0.75)] transition hover:bg-[#D62F3C] focus:outline-none focus:ring-4 focus:ring-[#FAD2D5] active:translate-y-px"
+            >
+              Gem profil
+            </button>
           </div>
         </form>
       )}
