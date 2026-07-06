@@ -23,6 +23,10 @@ export default function Layout() {
 
   const isChatRoute = location.pathname.startsWith("/messages");
   const isChatDetailRoute = /^\/messages\/[^/]+$/.test(location.pathname);
+  
+  // 1. ADDED THIS LINE to check if we are on the matches page
+  const isMatchesRoute = location.pathname.startsWith("/matches"); 
+
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -56,6 +60,7 @@ export default function Layout() {
     },
     { to: "/profile/me", label: "Profil", icon: User },
   ];
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-white">
       {/* ── SIDEBAR — desktop only ── */}
@@ -102,22 +107,11 @@ export default function Layout() {
         </nav>
 
         {/* Bottom — user + menu */}
-        {/* Bottom — user + menu */}
         <div className="relative mt-auto p-3" ref={menuRef}>
           <button
             type="button"
             onClick={() => setIsUserMenuOpen((open) => !open)}
-            className="
-flex w-full items-center gap-3
-rounded-2xl
-border border-[#EFE8E1]
-bg-white
-px-4 py-3
-shadow-sm
-hover:bg-gray-50
-transition-all
-text-left
-"
+            className="flex w-full items-center gap-3 rounded-2xl border border-[#EFE8E1] bg-white px-4 py-3 shadow-sm hover:bg-gray-50 transition-all text-left"
           >
             {user?.avatar ? (
               <span className="text-xl">{user.avatar}</span>
@@ -157,12 +151,16 @@ text-left
           )}
         </div>
       </aside>
+
       <div className="flex flex-col flex-1 overflow-hidden">
+        {/* 2. UPDATED THIS MAIN TAG to remove padding for Matches route */}
         <main
           className={
             isChatRoute
               ? "flex-1 min-h-0 flex flex-col overflow-hidden"
-              : "flex-1 p-6 md:p-8 bg-white"
+              : isMatchesRoute
+              ? "flex-1 flex flex-col min-h-0" // No padding here for Matches
+              : "flex-1 p-6 md:p-8 bg-white"   // Padding remains for Feed/Browse
           }
         >
           <Outlet />
