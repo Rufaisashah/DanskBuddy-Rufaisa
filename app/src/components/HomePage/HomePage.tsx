@@ -7,9 +7,9 @@ import mark from "../../assets/icon/mark.svg";
 import wordmark from "../../assets/wordmark/wordmark.svg";
 
 const benefits: string[] = [
-  "Practice Danish conversations",
-  "Find language partners",
-  "Join a supportive community",
+  "Øv danske samtaler",
+  "Find sprogpartnere",
+  "Bliv en del af et støttende fællesskab",
 ];
 
 function HomePage() {
@@ -75,18 +75,18 @@ function HomePage() {
             to="/register"
             className="rounded-pill bg-primary px-7 py-4 text-center font-bold text-white shadow-primary transition hover:bg-primary-dark"
           >
-            Get Started
+            Opret profil
           </Link>
 
           <Link
             to="/login"
             className="rounded-pill border border-surface bg-white px-7 py-4 text-center font-bold text-foreground shadow-card transition hover:bg-surface-alt"
           >
-            Login
+            Log ind
           </Link>
         </div>
 
-        <p className="mt-4 text-sm text-neutral">Free to join</p>
+        <p className="mt-4 text-sm text-neutral">Gratis at være med</p>
       </section>
     </main>
   );

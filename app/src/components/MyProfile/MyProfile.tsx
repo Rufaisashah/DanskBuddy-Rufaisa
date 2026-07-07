@@ -790,7 +790,7 @@ function MyProfile() {
               </div>
             </section>
 
-            <section className="mt-8 overflow-hidden rounded-[20px] sm:border border-[#EAE3D8] bg-white sm:shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
+            <section className="mt-8 overflow-hidden rounded-[20px] sm:border border-[#EAE3D8] bg-white shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
               <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
                 Om dig
               </h3>
