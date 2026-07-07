@@ -13,19 +13,18 @@ export function findMatchBetweenUsers(
         match.receiverId === currentUserId)
   );
 }
-
 export function getConnectButtonLabel(match: Match | undefined) {
   if (!match) {
-    return "Connect";
+    return "Forbind";
   }
 
   if (match.status === "pending") {
-    return "Pending";
+    return "Anmodning sendt";
   }
 
   if (match.status === "accepted") {
-    return "Connect";
+    return "Forbundet";
   }
 
-  return "Connect";
+  return "Send forbindelse";
 }

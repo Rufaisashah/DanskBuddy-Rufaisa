@@ -197,12 +197,12 @@ export default function PostCard({ post }: Props) {
                     >
                       {u.name
                         .split(" ")
-                        .map((p: string) => p)
+                        .map((p: string) => p[0])
                         .join("")
                         .toUpperCase()}
                     </div>
                     <span className="text-[0.85rem] font-medium text-foreground">
-                      {u.name.split(" ")}
+                      {u.name.split(" ")[0]}
                     </span>
                   </div>
                 ))}
