@@ -277,7 +277,7 @@ export default function PostCard({ post }: Props) {
                 >
                   {comment.authorName
                     .split(" ")
-                    .map((p: string) => p)
+                    .map((p: string) => p[0])
                     .join("")
                     .toUpperCase()}
                 </div>
