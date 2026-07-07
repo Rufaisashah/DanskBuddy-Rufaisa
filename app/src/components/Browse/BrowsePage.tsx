@@ -77,20 +77,21 @@ const roleOptions = [
 
 const danishLevelOptions = [
   danishLevelAllOption,
-  { value: "a1", label: "A1" },
-  { value: "a2", label: "A2" },
-  { value: "b1", label: "B1" },
-  { value: "b2", label: "B2" },
-  { value: "c1", label: "C1" },
-  { value: "c2", label: "C2" },
+  { value: "A1", label: "A1" },
+  { value: "A2", label: "A2" },
+  { value: "B1", label: "B1" },
+  { value: "B2", label: "B2" },
+  { value: "C1", label: "C1" },
+  { value: "C2", label: "C2" },
 ];
 
 const availabilityOptions = [
   availabilityAllOption,
-  { value: "mornings", label: "Mornings" },
-  { value: "evenings", label: "Evenings" },
-  { value: "weekends", label: "Weekends" },
-  { value: "flexible", label: "Flexible" },
+  { value: "Morgener", label: "Morgener" },
+  { value: "Aftener", label: "Aftener" },
+  { value: "Hverdage", label: "Hverdage" },
+  { value: "Weekender", label: "Weekender" },
+  { value: "Fleksibel", label: "Fleksibel" },
 ];
 
 function getCityOptions(users: User[]): SelectOption[] {
