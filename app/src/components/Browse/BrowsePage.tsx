@@ -288,14 +288,14 @@ function BrowsePage() {
   }
 
   return (
-    <main className="-m-8 min-h-[calc(100vh-8rem)] bg-surface-alt font-sans">
+    <main className="-m-8 min-h-[calc(100vh-8rem)] bg-white sm:bg-surface-alt  font-sans">
       <section
         aria-label="Search and filter"
-        className="relative z-20 w-full overflow-visible border-b border-surface bg-white px-4 py-4 sm:px-6 lg:px-8"
+        className="relative z-20 w-full overflow-visible sm:border-b border-surface bg-white px-5 pt-6 sm:px-6 lg:px-8"
       >
         <div className="relative mx-auto w-full max-w-7xl overflow-visible">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <h1 className="text-3xl font-bold leading-tight tracking-[-0.02em] text-[#161616] mb-3 sm:mb-0">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <h1 className="text-3xl font-bold leading-tight tracking-[-0.02em] text-[#161616]">
               Hvem vil du møde?
             </h1>
             <label
@@ -399,7 +399,7 @@ function BrowsePage() {
       </section>
 
       {filteredUsers.length > 0 ? (
-        <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-7xl px-5 py-5 sm:px-6 lg:px-8">
           <section
             aria-label="Language partners"
             className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
@@ -506,10 +506,14 @@ function BrowsePage() {
           </section>
         </div>
       ) : (
-        <EmptyState
-          title="No users found"
-          message="Try changing your search or filters."
-        />
+        <div className="px-4 py-10 sm:px-6">
+          <EmptyState
+            icon={<Search className="h-7 w-7" aria-hidden="true" />}
+            kicker="Søgning"
+            title="Ingen brugere fundet"
+            message="Prøv at ændre din søgning eller dine filtre."
+          />
+        </div>
       )}
     </main>
   );
