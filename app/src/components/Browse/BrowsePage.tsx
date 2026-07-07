@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import type { ChangeEvent } from "react";
 import { useApp } from "../../context/AppContext";
 import { useAuth } from "../../context/AuthContext";
@@ -76,20 +77,21 @@ const roleOptions = [
 
 const danishLevelOptions = [
   danishLevelAllOption,
-  { value: "a1", label: "A1" },
-  { value: "a2", label: "A2" },
-  { value: "b1", label: "B1" },
-  { value: "b2", label: "B2" },
-  { value: "c1", label: "C1" },
-  { value: "c2", label: "C2" },
+  { value: "A1", label: "A1" },
+  { value: "A2", label: "A2" },
+  { value: "B1", label: "B1" },
+  { value: "B2", label: "B2" },
+  { value: "C1", label: "C1" },
+  { value: "C2", label: "C2" },
 ];
 
 const availabilityOptions = [
   availabilityAllOption,
-  { value: "mornings", label: "Mornings" },
-  { value: "evenings", label: "Evenings" },
-  { value: "weekends", label: "Weekends" },
-  { value: "flexible", label: "Flexible" },
+  { value: "Morgener", label: "Morgener" },
+  { value: "Aftener", label: "Aftener" },
+  { value: "Hverdage", label: "Hverdage" },
+  { value: "Weekender", label: "Weekender" },
+  { value: "Fleksibel", label: "Fleksibel" },
 ];
 
 function getCityOptions(users: User[]): SelectOption[] {
@@ -184,32 +186,13 @@ function findMatchBetweenUsers(
   );
 }
 
-function getConnectButtonState(match: Match | undefined) {
-  if (!match) {
-    return {
-      label: "Opret forbindelse",
-      disabled: false,
-    };
-  }
+type ConnectionStatus = "connect" | "pending" | "accepted" | "declined";
 
-  if (match.status === "pending") {
-    return {
-      label: "Afventer",
-      disabled: true,
-    };
-  }
-
-  if (match.status === "accepted") {
-    return {
-      label: "Forbundet",
-      disabled: true,
-    };
-  }
-
-  return {
-    label: "Opret forbindelse",
-    disabled: false,
-  };
+function getConnectionStatus(match: Match | undefined): ConnectionStatus {
+  if (!match) return "connect";
+  if (match.status === "pending") return "pending";
+  if (match.status === "accepted") return "accepted";
+  return "declined";
 }
 
 function BrowsePage() {
@@ -306,14 +289,14 @@ function BrowsePage() {
   }
 
   return (
-    <main className="-m-8 min-h-[calc(100vh-8rem)] bg-background font-sans">
+    <main className="-m-8 min-h-[calc(100vh-8rem)] bg-white sm:bg-surface-alt  font-sans">
       <section
         aria-label="Search and filter"
-        className="relative z-20 w-full overflow-visible border-b border-surface bg-white px-4 py-4 sm:px-6 lg:px-8"
+        className="relative z-20 w-full overflow-visible sm:border-b border-surface bg-white px-5 pt-6 sm:px-6 lg:px-8"
       >
         <div className="relative mx-auto w-full max-w-7xl overflow-visible">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.02em] text-[#161616]">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <h1 className="text-3xl font-bold leading-tight tracking-[-0.02em] text-[#161616]">
               Hvem vil du møde?
             </h1>
             <label
@@ -396,6 +379,13 @@ function BrowsePage() {
                   onClose={() => setOpenDropdown("")}
                 />
               </div>
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                className="shrink-0 cursor-pointer px-4 py-2.5 text-sm font-semibold rounded-xl bg-[#FBF7F1] text-foreground hover:text-[#E63946] transition focus:outline-none"
+              >
+                Ryd filtre
+              </button>
             </div>
 
             <p className="hidden shrink-0 text-sm font-semibold text-neutral-light md:block">
@@ -410,7 +400,7 @@ function BrowsePage() {
       </section>
 
       {filteredUsers.length > 0 ? (
-        <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-7xl px-5 py-5 sm:px-6 lg:px-8">
           <section
             aria-label="Language partners"
             className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
@@ -420,7 +410,7 @@ function BrowsePage() {
                 ? findMatchBetweenUsers(matches, currentUser.id, profileUser.id)
                 : undefined;
 
-              const buttonState = getConnectButtonState(existingMatch);
+              const connectionStatus = getConnectionStatus(existingMatch);
 
               return (
                 <ProfileCard
@@ -428,14 +418,88 @@ function BrowsePage() {
                   user={toProfileCardUser(profileUser)}
                   showViewProfileLink
                   actions={
-                    <button
-                      type="button"
-                      onClick={() => handleConnect(profileUser.id)}
-                      disabled={buttonState.disabled}
-                      className="rounded-pill bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {buttonState.label}
-                    </button>
+                    connectionStatus === "connect" ? (
+                      <button
+                        type="button"
+                        onClick={() => handleConnect(profileUser.id)}
+                        className="flex h-11 w-full cursor-pointer items-center justify-center gap-1.5 rounded-[13px] bg-[#E63946] text-sm font-extrabold text-white shadow-[0_10px_18px_-12px_rgba(230,57,70,0.75)] transition hover:bg-[#D62F3C] active:translate-y-px"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3.2"
+                          strokeLinecap="round"
+                        >
+                          <path d="M12 5v14M5 12h14" />
+                        </svg>
+                        Forbind
+                      </button>
+                    ) : connectionStatus === "pending" ? (
+                      <span
+                        role="status"
+                        aria-disabled="true"
+                        className="flex h-11 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-[13px] border border-[#F4C9CD] bg-[#FDEAEC] text-sm font-extrabold text-[#D62F3C]"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          width="13"
+                          height="13"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                        Anmodet
+                      </span>
+                    ) : connectionStatus === "accepted" ? (
+                      <Link
+                        to={`/messages/${profileUser.id}`}
+                        className="flex h-11 w-full items-center justify-center gap-1.5 rounded-[13px] border border-[#EAE3D8] bg-white text-sm font-extrabold text-[#2B2A28] no-underline transition hover:bg-[#FBF7F1] active:translate-y-px"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          width="15"
+                          height="15"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M20 5H4a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v3l4-3h9a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1Z" />
+                        </svg>
+                        Besked
+                      </Link>
+                    ) : (
+                      <span
+                        role="status"
+                        aria-disabled="true"
+                        className="flex h-11 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-[13px] border border-[#E4DCCF] bg-[#F6F0E8] text-sm font-extrabold text-[#8A8175]"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3.2"
+                          strokeLinecap="round"
+                        >
+                          <path d="M18 6 6 18M6 6l12 12" />
+                        </svg>
+                        Afvist
+                      </span>
+                    )
                   }
                 />
               );
@@ -443,10 +507,14 @@ function BrowsePage() {
           </section>
         </div>
       ) : (
-        <EmptyState
-          title="No users found"
-          message="Try changing your search or filters."
-        />
+        <div className="px-4 py-10 sm:px-6">
+          <EmptyState
+            icon={<Search className="h-7 w-7" aria-hidden="true" />}
+            kicker="Søgning"
+            title="Ingen brugere fundet"
+            message="Prøv at ændre din søgning eller dine filtre."
+          />
+        </div>
       )}
     </main>
   );

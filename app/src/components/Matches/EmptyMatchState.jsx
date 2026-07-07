@@ -15,6 +15,7 @@ function InboxIcon({ color }) {
     </svg>
   );
 }
+
 function NoEntryIcon({ color }) {
   return (
     <svg
@@ -32,6 +33,7 @@ function NoEntryIcon({ color }) {
     </svg>
   );
 }
+
 function PeopleIcon({ color }) {
   return (
     <svg
@@ -51,35 +53,37 @@ function PeopleIcon({ color }) {
     </svg>
   );
 }
+
 const CONFIG = {
   requests: {
     icon: InboxIcon,
     iconBg: "#FDEAEC",
     iconColor: "#D62F3C",
-    label: "Requests",
-    title: "No pending requests",
-    body: "When someone wants to practise with you — or you reach out — it shows up here.",
-    cta: "Find partners",
+    label: "Anmodninger",
+    title: "Ingen afventende anmodninger",
+    body: "Når nogen vil øve med dig — eller hvis du selv rækker ud — vil det blive vist her.",
+    cta: "Find partnere",
   },
   declined: {
     icon: NoEntryIcon,
     iconBg: "#F1ECE3",
     iconColor: "#8A8175",
-    label: "Declined",
-    title: "Nothing declined",
-    body: "Requests you or others turn down land here, so you can revisit them later.",
+    label: "Afviste",
+    title: "Ingen afviste match",
+    body: "Anmodninger, du eller andre afviser, lander her, så du kan vende tilbage til dem senere.",
     cta: null,
   },
   connected: {
     icon: PeopleIcon,
     iconBg: "#FBE8C7",
     iconColor: "#C97F35",
-    label: "Connected",
-    title: "No partners yet",
-    body: "Accept a request or send one to start building your circle of language buddies.",
-    cta: "Browse people",
+    label: "Forbindelser",
+    title: "Ingen forbindelser endnu",
+    body: "Accepter en anmodning eller send en selv for at begynde at opbygge din cirkel af sprogbuddies.",
+    cta: "Udforsk profiler",
   },
 };
+
 export default function EmptyMatchState({ type, onCtaClick }) {
   const cfg = CONFIG[type];
   if (!cfg) return null;

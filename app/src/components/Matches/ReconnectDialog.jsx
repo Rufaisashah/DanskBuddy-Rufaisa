@@ -15,6 +15,7 @@ function RefreshIcon() {
     </svg>
   );
 }
+
 export default function ReconnectDialog({ name, onCancel, onConfirm }) {
   return (
     <div
@@ -29,27 +30,32 @@ export default function ReconnectDialog({ name, onCancel, onConfirm }) {
           <RefreshIcon />
         </div>
 
+        {/* 1. Translated Heading */}
         <div className="text-[17px] font-extrabold tracking-tight text-[#2B2A28]">
-          Send {name} a request again?
+          Send {name} en anmodning igen?
         </div>
 
+        {/* 2. Translated Body Paragraph */}
         <p className="mt-[8px] text-[13px] font-medium leading-[1.5] text-[#7C756B]">
-          You declined this match earlier. Sending again lets {name} accept and
-          start a chat.
+          Du har tidligere afvist dette match. Hvis du sender en anmodning igen,
+          kan {name} acceptere og starte en chat.
         </p>
 
         <div className="mt-[18px] flex gap-[9px]">
+          {/* 3. Translated Cancel Button */}
           <button
             onClick={onCancel}
             className="flex-1 rounded-[12px] border-[1.5px] border-[#ECE6DD] bg-white py-[11px] text-[13.5px] font-extrabold text-[#7C756B]"
           >
-            Cancel
+            Annuller
           </button>
+
+          {/* 4. Translated Confirm Button */}
           <button
             onClick={onConfirm}
             className="flex-1 rounded-[12px] bg-[#E63946] py-[11px] text-[13.5px] font-extrabold text-white shadow-[0_10px_20px_-10px_rgba(0,0,0,0.3)]"
           >
-            Send request
+            Send anmodning
           </button>
         </div>
       </div>

@@ -85,60 +85,61 @@ export default function TopBar({ onSearch }: Props) {
             )}
           </button>
 
-          {/* Dropdown */}
-          {open && (
-            <div className="absolute top-12 right-0 w-[300px] lg:w-[320px] bg-white rounded-2xl shadow-elevated z-50 overflow-hidden border border-neutral-100">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-50">
-                <h3 className="m-0 text-[0.95rem] font-bold text-foreground">
-                  Notifikationer
-                </h3>
-                {unread > 0 && (
-                  <span className="text-xs font-semibold text-white bg-[#EA4C61] px-2 py-0.5 rounded-full">
-                    {unread} ny
-                  </span>
-                )}
-              </div>
+            {/* Dropdown */}
+            {open && (
+              <div className="absolute top-12 right-0 w-[300px] lg:w-[320px] bg-white rounded-2xl shadow-elevated z-50 overflow-hidden border border-neutral-100">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-50">
+                  <h3 className="m-0 text-[0.95rem] font-bold text-foreground">
+                    Notifikationer
+                  </h3>
+                  {unread > 0 && (
+                    <span className="text-xs font-semibold text-white bg-[#EA4C61] px-2 py-0.5 rounded-full">
+                      {unread} ny
+                    </span>
+                  )}
+                </div>
 
-              <div className="max-h-[360px] overflow-y-auto">
-                {notifications.length === 0 ? (
-                  <div className="px-5 py-8 text-center text-neutral-400 text-sm">
-                    Ingen notifikationer endnu
-                  </div>
-                ) : (
-                  notifications.map((n) => (
-                    <button
-                      key={n.id}
-                      onClick={() => handleNotificationClick(n.postId)}
-                      className="w-full flex items-start gap-3 px-5 py-3.5 border-b border-neutral-50 last:border-b-0 hover:bg-neutral-50/50 transition-colors text-left cursor-pointer bg-transparent"
-                    >
-                      <div
-                        className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                          n.type === "like" ? "bg-rose-50" : "bg-sky-50"
-                        }`}
+                <div className="max-h-[360px] overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="px-5 py-8 text-center text-neutral-400 text-sm">
+                      Ingen notifikationer endnu
+                    </div>
+                  ) : (
+                    notifications.map((n) => (
+                      <button
+                        key={n.id}
+                        onClick={() => handleNotificationClick(n.postId)}
+                        className="w-full flex items-start gap-3 px-5 py-3.5 border-b border-neutral-50 last:border-b-0 hover:bg-neutral-50/50 transition-colors text-left cursor-pointer bg-transparent"
                       >
-                        {n.type === "like" ? (
-                          <Heart size={15} className="text-[#EA4C61]" />
-                        ) : (
-                          <MessageCircle size={15} className="text-sky-500" />
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-0.5 min-w-0">
-                        <p className="m-0 text-[0.85rem] text-foreground leading-snug">
-                          <span className="font-semibold">{n.actorName}</span>
-                          {n.type === "like"
-                            ? " likede dit opslag"
-                            : " kommenterede på dit opslag"}
-                        </p>
-                        <p className="m-0 text-[0.75rem] text-neutral-400 truncate">
-                          "{n.postSnippet}…"
-                        </p>
-                      </div>
-                    </button>
-                  ))
-                )}
+                        <div
+                          className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                            n.type === "like" ? "bg-rose-50" : "bg-sky-50"
+                          }`}
+                        >
+                          {n.type === "like" ? (
+                            <Heart size={15} className="text-[#EA4C61]" />
+                          ) : (
+                            <MessageCircle size={15} className="text-sky-500" />
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-0.5 min-w-0">
+                          <p className="m-0 text-[0.85rem] text-foreground leading-snug">
+                            <span className="font-semibold">{n.actorName}</span>
+                            {n.type === "like"
+                              ? " likede dit opslag"
+                              : " kommenterede på dit opslag"}
+                          </p>
+                          <p className="m-0 text-[0.75rem] text-neutral-400 truncate">
+                            "{n.postSnippet}…"
+                          </p>
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </header>

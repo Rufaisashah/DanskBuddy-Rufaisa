@@ -58,6 +58,7 @@ export default function ChatWindow() {
 
         <Avatar
           initials={getInitials(otherUser.name)}
+          image={otherUser.avatar}
           online={true}
           size="lg"
           color={avatarColor(otherUser.id)}

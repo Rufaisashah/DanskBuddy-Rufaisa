@@ -8,20 +8,36 @@ const SIZE = {
   profile: "w-[92px] h-[92px] text-[34px]",
 };
 
+export function isImageAvatar(value) {
+  return (
+    typeof value === "string" &&
+    (value.startsWith("data:image") || value.startsWith("http"))
+  );
+}
+
 export default function Avatar({
   initials,
+  image = "",
   online = false,
   size = "md",
   color = AVATAR_COLOR,
 }) {
   return (
-    <div className="relative inline-flex">
-      <div
-        className={`${SIZE[size]} rounded-full text-white font-extrabold flex items-center justify-center`}
-        style={{ backgroundColor: color }}
-      >
-        {initials}
-      </div>
+    <div className="relative inline-flex align-top">
+      {isImageAvatar(image) ? (
+        <img
+          src={image}
+          alt="Brugeravatar"
+          className={`${SIZE[size]} rounded-full object-cover`}
+        />
+      ) : (
+        <div
+          className={`${SIZE[size]} rounded-full text-white font-extrabold flex items-center justify-center`}
+          style={{ backgroundColor: color || AVATAR_COLOR }}
+        >
+          {image || initials}
+        </div>
+      )}
       {online && (
         <span className="absolute bottom-0 right-0 w-3 h-3 bg-success rounded-full border-2 border-white" />
       )}

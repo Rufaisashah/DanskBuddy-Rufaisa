@@ -4,6 +4,7 @@ import Avatar from "../Shared/Avatar";
 import StyledDropdown from "../Shared/StyledDropdown";
 import LevelBadge from "../Shared/LevelBadge";
 import type { UserRole, DanishLevel } from "../../types/types";
+import toast from "react-hot-toast";
 
 import { useAuth } from "../../context/AuthContext";
 import { useApp } from "../../context/AppContext";
@@ -125,7 +126,7 @@ const LANGUAGE_NAMES: Record<string, string> = {
 };
 
 const fieldClass =
-  "mt-2 w-full rounded-2xl border border-[#ECE6DD] bg-white px-4 py-3.5 text-[15px] font-semibold text-[#2B2A28] outline-none transition placeholder:text-[#A89F94] focus:border-[#E63946] focus:ring-4 focus:ring-[#FDEAEC]";
+  "mt-2 w-full rounded-xl border border-[#ECE6DD] bg-white px-4 py-2.5 text-[15px] font-semibold text-[#2B2A28] outline-none transition placeholder:text-[#A89F94] focus:border-[#E63946] focus:ring-4 focus:ring-[#FDEAEC]";
 
 const labelClass =
   "block text-[12px] font-extrabold tracking-[-0.01em] text-[#6E665C]";
@@ -250,7 +251,6 @@ function MyProfile() {
   const { messages, getAcceptedMatchesForUser } = useApp() as AppContextValue;
 
   const [isEditing, setIsEditing] = useState(false);
-  const [message, setMessage] = useState("");
   const [openDropdown, setOpenDropdown] = useState<DropdownName | "">("");
   const [topicInput, setTopicInput] = useState("");
 
@@ -322,9 +322,26 @@ function MyProfile() {
 
     const reader = new FileReader();
     reader.onload = () => {
-      setFormData((prev) => ({ ...prev, avatar: String(reader.result) }));
+      const img = new Image();
+      img.onload = () => {
+        const MAX_SIZE = 256;
+        const scale = Math.min(1, MAX_SIZE / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas
+          .getContext("2d")
+          ?.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        setFormData((prev) => ({
+          ...prev,
+          avatar: canvas.toDataURL("image/jpeg", 0.85),
+        }));
+      };
+      img.src = String(reader.result);
     };
     reader.readAsDataURL(file);
+    event.target.value = "";
   }
 
   function addTopic() {
@@ -362,13 +379,11 @@ function MyProfile() {
 
   function handleEdit() {
     setFormData(getFormDataFromUser(currentUser));
-    setMessage("");
     setIsEditing(true);
   }
 
   function handleCancel() {
     setIsEditing(false);
-    setMessage("");
     setOpenDropdown("");
     setFormData(getFormDataFromUser(currentUser));
   }
@@ -377,7 +392,7 @@ function MyProfile() {
     event.preventDefault();
 
     if (!updateUser) {
-      setMessage("Profilredigering er ikke tilgængelig endnu.");
+      toast.error("Profilredigering er ikke tilgængelig endnu.");
       return;
     }
 
@@ -402,21 +417,13 @@ function MyProfile() {
 
     setIsEditing(false);
     setOpenDropdown("");
-    setMessage("Profilen er opdateret.");
+    toast.success("Profilen er opdateret.");
   }
 
   return (
-    <main className="-m-8 min-h-[calc(100vh-8rem)]  px-4 py-8 font-sans text-[#2B2A28] sm:px-6 bg-white sm:bg-background lg:px-10">
-      <div className="mx-auto w-full max-w-[760px]">
-        {message && (
-          <p className="mt-5 rounded-2xl border border-[#D7EFE2] bg-success-light px-4 py-3 text-sm font-bold text-success-dark">
-            {message}
-          </p>
-        )}
-      </div>
-
+    <main className="-m-8 min-h-[calc(100vh-8rem)]  px-4 py-8 font-sans text-[#2B2A28] sm:px-6 bg-white sm:bg-surface-alt lg:px-10">
       {!isEditing ? (
-        <section className="mx-auto w-full max-w-[760px] space-y-4 sm:space-y-5">
+        <section className="mx-auto w-full space-y-4 sm:space-y-5">
           <article className="-mx-4 -mt-8 overflow-hidden sm:border-y border-[#EAE3D8] bg-white sm:shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] sm:mx-0 sm:mt-0 sm:rounded-[20px] sm:border">
             <div className="h-[122px] bg-gradient-to-r from-[#E63946] via-[#F0525D] to-[#FF9665] sm:h-[104px]" />
 
@@ -426,6 +433,7 @@ function MyProfile() {
                   <div className="rounded-full border-4 border-white shadow-[0_12px_24px_-16px_rgba(33,30,28,0.55)]">
                     <Avatar
                       initials={getInitials(currentUser.name)}
+                      image={currentUser.avatar}
                       size="profile"
                       color={currentUser.avatarBgColor}
                     />
@@ -463,7 +471,7 @@ function MyProfile() {
                 <button
                   type="button"
                   onClick={handleEdit}
-                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#EAE3D8] bg-white px-5 py-3 text-[13px] font-bold text-[#2b2a28] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px sm:mt-14"
+                  className="inline-flex whitespace-nowrap shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#EAE3D8] bg-white px-5 py-3 text-[13px] font-bold text-[#2b2a28] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px sm:mt-14"
                 >
                   <svg
                     aria-hidden="true"
@@ -567,15 +575,15 @@ function MyProfile() {
         <form
           onSubmit={handleSubmit}
           onKeyDown={handleFormKeyDown}
-          className="mx-auto w-full max-w-5xl"
+          className="mx-auto w-full"
         >
-          <header className="-mx-4 -mt-8 mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#EAE3D8] bg-white px-4 py-4 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
+          <header className="-mx-4 -mt-8 mb-6 flex inset-x-0 z-100 flex-wrap items-center justify-between gap-3 border-b border-[#EAE3D8] bg-white px-4 py-4 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
             <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={handleCancel}
                 aria-label="Tilbage"
-                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[#EAE3D8] bg-white text-[#2b2a28] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC]"
+                className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-[#EAE3D8] text-[#2b2a28] transition bg-[#fbf6ef] hover:bg-white focus:outline-none focus:ring-4 focus:ring-[#FDEAEC]"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -590,30 +598,30 @@ function MyProfile() {
                 </svg>
               </button>
 
-              <h1 className="text-[22px] font-extrabold leading-tight tracking-[-0.02em] text-[#161616]">
+              <h1 className="text-3xl font-bold leading-tight tracking-[-0.02em] text-[#161616]">
                 Rediger profil
               </h1>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="hidden items-center gap-3 sm:flex">
               <button
                 type="button"
                 onClick={handleCancel}
-                className="cursor-pointer rounded-full border border-[#EAE3D8] bg-white px-5 py-2.5 text-sm font-extrabold text-[#6E665C] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px"
+                className="cursor-pointer rounded-xl border border-[#EAE3D8] bg-white px-5 py-2.5 text-sm font-extrabold text-[#6E665C] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px"
               >
                 Annuller
               </button>
 
               <button
                 type="submit"
-                className="cursor-pointer rounded-full bg-[#E63946] px-5 py-2.5 text-sm font-extrabold text-white shadow-[0_14px_24px_-12px_rgba(230,57,70,0.75)] transition hover:bg-[#D62F3C] focus:outline-none focus:ring-4 focus:ring-[#FAD2D5] active:translate-y-px"
+                className="cursor-pointer rounded-xl bg-[#E63946] px-5 py-2.5 text-sm font-extrabold text-white shadow-[0_14px_24px_-12px_rgba(230,57,70,0.75)] transition hover:bg-[#D62F3C] focus:outline-none focus:ring-4 focus:ring-[#FAD2D5] active:translate-y-px"
               >
                 Gem profil
               </button>
             </div>
           </header>
           <div className="space-y-4 sm:space-y-5">
-            <section className="overflow-hidden rounded-[20px] border border-[#EAE3D8] bg-white shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
+            <section className="overflow-hidden rounded-[20px] sm:border border-[#EAE3D8] bg-white sm:shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
               <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
                 Identitet
               </h3>
@@ -622,19 +630,12 @@ function MyProfile() {
                 <div className={labelClass}>
                   Avatar
                   <div className="mt-2 flex items-center gap-4">
-                    {formData.avatar.startsWith("data:") ? (
-                      <img
-                        src={formData.avatar}
-                        alt="Avatar"
-                        className="h-16 w-16 rounded-full object-cover ring-2 ring-[#E63946]"
-                      />
-                    ) : (
-                      <Avatar
-                        initials={getInitials(formData.name || "?")}
-                        size="lg"
-                        color={user.avatarBgColor}
-                      />
-                    )}
+                    <Avatar
+                      initials={getInitials(formData.name || "?")}
+                      image={formData.avatar}
+                      size="profile"
+                      color={user.avatarBgColor}
+                    />
 
                     <label className="cursor-pointer rounded-full border border-[#EAE3D8] bg-white px-4 py-2.5 text-[13px] font-bold text-[#2b2a28] transition hover:bg-[#FBF7F1]">
                       Upload billede
@@ -645,6 +646,17 @@ function MyProfile() {
                         className="hidden"
                       />
                     </label>
+                    {formData.avatar.startsWith("data:") && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFormData((prev) => ({ ...prev, avatar: "" }))
+                        }
+                        className="cursor-pointer text-[13px] font-bold text-[#A89F94] transition hover:text-[#E63946]"
+                      >
+                        Fjern billede
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -720,7 +732,7 @@ function MyProfile() {
               </div>
             </section>
 
-            <section className="mt-8 overflow-hidden rounded-[20px] border border-[#EAE3D8] bg-white shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
+            <section className="mt-8 overflow-hidden rounded-[20px] sm:border border-[#EAE3D8] bg-white sm:shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
               <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
                 Sprog & tilgængelighed
               </h3>
@@ -778,7 +790,7 @@ function MyProfile() {
               </div>
             </section>
 
-            <section className="mt-8 overflow-hidden rounded-[20px] border border-[#EAE3D8] bg-white shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
+            <section className="mt-8 overflow-hidden rounded-[20px] sm:border border-[#EAE3D8] bg-white shadow-[0px_8px_18px_-18px_rgba(43,42,40,0.5)] p-5 sm:p-6">
               <h3 className="text-[12px] font-extrabold uppercase tracking-[0.12em] text-[#A89F94]">
                 Om dig
               </h3>
@@ -832,7 +844,7 @@ function MyProfile() {
                       }}
                       onBlur={addTopic}
                       placeholder="+ Tilføj emne"
-                      className="min-w-[110px] flex-1 rounded-full border border-dashed border-[#D9D0C3] bg-transparent px-3 py-1.5 text-[13px] font-semibold outline-none placeholder:text-[#A89F94] focus:border-[#E63946]"
+                      className="min-w-[110px] flex-1 rounded-full border border-dashed border-[#D9D0C3] bg-transparent px-3 py-2 text-[13px] font-semibold outline-none placeholder:text-[#A89F94] focus:border-[#E63946]"
                     />
                   </div>
                 </div>
@@ -854,6 +866,22 @@ function MyProfile() {
                 </label>
               </div>
             </section>
+          </div>
+          <div className="fixed inset-x-0 bottom-0 z-100 flex gap-3 border-t border-[#EAE3D8] bg-white px-4 py-3 sm:hidden">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="flex-1 cursor-pointer rounded-[13px] border border-[#EAE3D8] bg-white px-5 py-3 text-sm font-extrabold text-[#6E665C] transition hover:bg-[#FBF7F1] focus:outline-none focus:ring-4 focus:ring-[#FDEAEC] active:translate-y-px"
+            >
+              Annuller
+            </button>
+
+            <button
+              type="submit"
+              className="flex-1 cursor-pointer rounded-[13px] bg-[#E63946] px-5 py-3 text-sm font-extrabold text-white shadow-[0_14px_24px_-12px_rgba(230,57,70,0.75)] transition hover:bg-[#D62F3C] focus:outline-none focus:ring-4 focus:ring-[#FAD2D5] active:translate-y-px"
+            >
+              Gem profil
+            </button>
           </div>
         </form>
       )}
