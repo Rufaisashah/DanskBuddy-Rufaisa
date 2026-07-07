@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import type { ChangeEvent } from "react";
 import { useApp } from "../../context/AppContext";
 import { useAuth } from "../../context/AuthContext";
@@ -184,32 +185,13 @@ function findMatchBetweenUsers(
   );
 }
 
-function getConnectButtonState(match: Match | undefined) {
-  if (!match) {
-    return {
-      label: "Opret forbindelse",
-      disabled: false,
-    };
-  }
+type ConnectionStatus = "connect" | "pending" | "accepted" | "declined";
 
-  if (match.status === "pending") {
-    return {
-      label: "Afventer",
-      disabled: true,
-    };
-  }
-
-  if (match.status === "accepted") {
-    return {
-      label: "Forbundet",
-      disabled: true,
-    };
-  }
-
-  return {
-    label: "Opret forbindelse",
-    disabled: false,
-  };
+function getConnectionStatus(match: Match | undefined): ConnectionStatus {
+  if (!match) return "connect";
+  if (match.status === "pending") return "pending";
+  if (match.status === "accepted") return "accepted";
+  return "declined";
 }
 
 function BrowsePage() {
@@ -427,7 +409,7 @@ function BrowsePage() {
                 ? findMatchBetweenUsers(matches, currentUser.id, profileUser.id)
                 : undefined;
 
-              const buttonState = getConnectButtonState(existingMatch);
+              const connectionStatus = getConnectionStatus(existingMatch);
 
               return (
                 <ProfileCard
@@ -435,14 +417,88 @@ function BrowsePage() {
                   user={toProfileCardUser(profileUser)}
                   showViewProfileLink
                   actions={
-                    <button
-                      type="button"
-                      onClick={() => handleConnect(profileUser.id)}
-                      disabled={buttonState.disabled}
-                      className="rounded-pill bg-primary px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {buttonState.label}
-                    </button>
+                    connectionStatus === "connect" ? (
+                      <button
+                        type="button"
+                        onClick={() => handleConnect(profileUser.id)}
+                        className="flex h-11 w-full cursor-pointer items-center justify-center gap-1.5 rounded-[13px] bg-[#E63946] text-sm font-extrabold text-white shadow-[0_10px_18px_-12px_rgba(230,57,70,0.75)] transition hover:bg-[#D62F3C] active:translate-y-px"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3.2"
+                          strokeLinecap="round"
+                        >
+                          <path d="M12 5v14M5 12h14" />
+                        </svg>
+                        Forbind
+                      </button>
+                    ) : connectionStatus === "pending" ? (
+                      <span
+                        role="status"
+                        aria-disabled="true"
+                        className="flex h-11 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-[13px] border border-[#F4C9CD] bg-[#FDEAEC] text-sm font-extrabold text-[#D62F3C]"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          width="13"
+                          height="13"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                        Anmodet
+                      </span>
+                    ) : connectionStatus === "accepted" ? (
+                      <Link
+                        to={`/messages/${profileUser.id}`}
+                        className="flex h-11 w-full items-center justify-center gap-1.5 rounded-[13px] border border-[#EAE3D8] bg-white text-sm font-extrabold text-[#2B2A28] no-underline transition hover:bg-[#FBF7F1] active:translate-y-px"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          width="15"
+                          height="15"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M20 5H4a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v3l4-3h9a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1Z" />
+                        </svg>
+                        Besked
+                      </Link>
+                    ) : (
+                      <span
+                        role="status"
+                        aria-disabled="true"
+                        className="flex h-11 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-[13px] border border-[#E4DCCF] bg-[#F6F0E8] text-sm font-extrabold text-[#8A8175]"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3.2"
+                          strokeLinecap="round"
+                        >
+                          <path d="M18 6 6 18M6 6l12 12" />
+                        </svg>
+                        Afvist
+                      </span>
+                    )
                   }
                 />
               );
