@@ -21,7 +21,10 @@ import FeedPage from "./components/Feed/FeedPage.tsx";
 import MyProfile from "./components/MyProfile/MyProfile.tsx";
 import PublicProfile from "./components/PublicProfile/PublicProfile.tsx";
 import { Toaster } from "react-hot-toast";
+import { registerSW } from "virtual:pwa-register";
 import "./main.css";
+
+registerSW({ immediate: true });
 function Placeholder({ name }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-gray-400">
