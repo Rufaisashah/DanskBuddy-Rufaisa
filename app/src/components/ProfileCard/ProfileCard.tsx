@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import type { ReactNode } from "react";
 import { avatarColor } from "../../utils/avatarColor";
 import { getInitials } from "../../utils/getInitials";
+import LevelBadge from "../Shared/LevelBadge";
+import type { Level } from "../Shared/LevelBadge";
 
 type UserRole = "learner" | "native";
 
@@ -12,6 +14,7 @@ export type ProfileCardUser = {
   city: string;
   role: UserRole;
   danishLevel: string;
+  nativeLanguage: string;
   interests: string[];
   bio: string;
 };
@@ -22,6 +25,20 @@ type ProfileCardProps = {
   showViewProfileLink?: boolean;
 };
 
+const MAX_VISIBLE_INTERESTS = 3;
+
+const VALID_LEVELS: Level[] = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
+function getLanguageCode(language: string) {
+  return (language || "EN").slice(0, 2).toUpperCase();
+}
+
+function getLevel(user: ProfileCardUser): Level | null {
+  return VALID_LEVELS.includes(user.danishLevel as Level)
+    ? (user.danishLevel as Level)
+    : null;
+}
+
 function ProfileCard({
   user,
   actions,
@@ -30,22 +47,51 @@ function ProfileCard({
   const shortBio =
     user.bio.length > 120 ? `${user.bio.slice(0, 120)}...` : user.bio;
 
+  const isNative = user.role === "native";
+  const level = getLevel(user);
+
+  const nativeCode = getLanguageCode(user.nativeLanguage);
+  const languageFrom = isNative ? "DK" : nativeCode;
+  const languageTo = isNative
+    ? nativeCode === "DA"
+      ? "EN"
+      : nativeCode
+    : "DK";
+
+  const visibleInterests = user.interests.slice(0, MAX_VISIBLE_INTERESTS);
+  const hiddenInterestCount = user.interests.length - visibleInterests.length;
+
+  const name = showViewProfileLink ? (
+    <Link
+      to={`/profile/${user.id}`}
+      className="truncate text-[17px] font-extrabold tracking-[-0.01em] text-[#161616] no-underline transition hover:text-[#E63946]"
+    >
+      {user.name}
+    </Link>
+  ) : (
+    <h2 className="truncate text-[17px] font-extrabold tracking-[-0.01em] text-[#161616]">
+      {user.name}
+    </h2>
+  );
+
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-        <div
-          className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full text-white text-xl font-bold"
-          style={{ backgroundColor: avatarColor(user.id) }}
-        >
-          {user.avatar.startsWith("data:image") ? (
-            <img
-              src={user.avatar}
-              alt="Brugeravatar"
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            user.avatar || getInitials(user.name)
-          )}
+    <article className="flex flex-col gap-3 rounded-2xl border border-[#EAE3D8] bg-white p-5 shadow-[0_14px_28px_-24px_rgba(33,30,28,0.35)]">
+      <div className="flex flex-col gap-3">
+        <div className="relative flex-none">
+          <div
+            className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full text-white text-lg font-bold text-white"
+            style={{ backgroundColor: avatarColor(user.id) }}
+          >
+            {user.avatar.startsWith("data:image") ? (
+              <img
+                src={user.avatar}
+                alt="Brugeravatar"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              user.avatar || getInitials(user.name)
+            )}
+          </div>
         </div>
 
         <div className="flex-1">

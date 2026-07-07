@@ -396,6 +396,13 @@ function BrowsePage() {
                   onClose={() => setOpenDropdown("")}
                 />
               </div>
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                className="shrink-0 cursor-pointer px-4 py-2.5 text-sm font-semibold rounded-xl bg-[#FBF7F1] text-foreground hover:text-[#E63946] transition focus:outline-none"
+              >
+                Ryd filtre
+              </button>
             </div>
 
             <p className="hidden shrink-0 text-sm font-semibold text-neutral-light md:block">
