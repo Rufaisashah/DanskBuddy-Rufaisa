@@ -184,7 +184,7 @@ function PublicProfile() {
                           {getRoleLabel(profileUser.role)}
                         </span>
                         <span className="text-emerald-500 flex items-center gap-1">
-                          Active now
+                          Aktiv nu
                         </span>
                         {profileUser.city && (
                           <span className="text-neutral-400 font-medium">
@@ -195,7 +195,7 @@ function PublicProfile() {
 
                       {/* Average response interval tracker text */}
                       <p className="text-[11px] text-neutral-400 font-semibold mt-1">
-                        • Replies within ~1h
+                        • Svarer inden for ~1 time
                       </p>
                     </div>
                   </div>
@@ -206,7 +206,7 @@ function PublicProfile() {
                         to={`/messages/${profileUser.id}`}
                         className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-2xl bg-white border border-[#ECE7E2] px-6 h-12 text-xs font-extrabold text-neutral-700 shadow-sm hover:bg-neutral-50 transition-colors"
                       >
-                        Message
+                        Beskeder
                       </Link>
                     ) : (
                       <button
@@ -215,7 +215,7 @@ function PublicProfile() {
                         title="You need to connect before sending a message"
                         className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-2xl bg-neutral-50 border border-[#ECE7E2]/60 px-6 h-12 text-xs font-extrabold text-neutral-400 cursor-not-allowed shadow-none"
                       >
-                        Message
+                        Beskeder
                       </button>
                     )}
 
@@ -246,7 +246,7 @@ function PublicProfile() {
             {/* About Section Container */}
             <section className="rounded-3xl border border-[#ECE7E2] bg-white p-6 shadow-sm">
               <h2 className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-400">
-                About
+                Om
               </h2>
               <p className="mt-3 text-sm font-semibold text-neutral-700 leading-relaxed whitespace-pre-wrap">
                 {profileUser.bio || "No bio added yet."}
@@ -256,7 +256,7 @@ function PublicProfile() {
             {/* Languages Container Card */}
             <section className="rounded-3xl border border-[#ECE7E2] bg-white p-6 shadow-sm">
               <h2 className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-400 mb-4">
-                Languages
+                Sprog
               </h2>
 
               <div className="flex flex-col gap-4">
@@ -346,19 +346,19 @@ function PublicProfile() {
 
           <aside className="flex flex-col gap-6 w-full lg:max-w-[360px]">
             <ProfileListSection
-              title="Interest"
+              title="Interesser"
               items={profileUser.interests}
               emptyMessage="No topics added yet."
             />
 
             <ProfileListSection
-              title="Learning goals"
+              title="Læringsmål "
               items={profileUser.learningGoals}
               emptyMessage="No learning goals added yet."
             />
 
             <ProfileListSection
-              title="Availability"
+              title="Tilgængelighed"
               items={profileUser.availability}
               emptyMessage="No availability added yet."
             />
