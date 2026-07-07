@@ -1,6 +1,8 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
+
 import { useApp } from "../../context/AppContext";
 import { useAuth } from "../../context/AuthContext";
+import Avatar from "../Shared/Avatar";
 import EmptyState from "../Shared/EmptyState";
 import type { Match, SendMatchResult, User } from "../../types/types";
 import {
@@ -26,19 +28,9 @@ function getRoleLabel(role: User["role"]) {
   return role.value === "native" ? "Native speaker" : "Learner";
 }
 
-function getLevelLabel(level: string | undefined) {
-  if (!level) return "Not added yet";
-  const labels: Record<string, string> = {
-    beginner: "Beginner",
-    intermediate: "Intermediate",
-    advanced: "Advanced",
-    native: "Native",
-  };
-  return labels[level] ?? level;
-}
-
 function getLevelBadgeClass(level: string | undefined) {
-  if (level === "native") return "bg-rose-100 text-[#EA4C61]";
+  if (level === "native" || !level)
+    return "bg-rose-50 text-[#EA4C61] border border-rose-100";
   if (level === "advanced") return "bg-primary-pale text-primary-dark";
   if (level === "intermediate") return "bg-primary-light text-primary";
   return "bg-secondary-light text-secondary-dark";
@@ -61,8 +53,8 @@ function ProfileListSection({
   const isGoals = title.toLowerCase().includes("goals");
 
   return (
-    <section className="rounded-3xl border border-surface bg-white p-6 w-full">
-      <h2 className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-light">
+    <section className="rounded-3xl border border-[#ECE7E2] bg-white p-6 w-full shadow-sm">
+      <h2 className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-400">
         {title}
       </h2>
 
@@ -75,7 +67,7 @@ function ProfileListSection({
                   key={`${item}-${index}`}
                   className="flex items-start gap-2.5 text-xs font-bold text-neutral-800 leading-snug"
                 >
-                  <span className="flex items-center justify-center w-4 h-4 rounded-full bg-rose-100 text-[#EA4C61] text-[10px] shrink-0 mt-0.5">
+                  <span className="flex items-center justify-center w-4 h-4 rounded-full bg-rose-50 text-[#EA4C61] text-[10px] shrink-0 mt-0.5 border border-rose-100">
                     ✓
                   </span>
                   <span>{item}</span>
@@ -87,7 +79,7 @@ function ProfileListSection({
               {listItems.map((item, index) => (
                 <li
                   key={`${item}-${index}`}
-                  className="rounded-xl bg-[#FAF6F0] px-3 py-1.5 text-xs font-bold text-neutral-800 border border-neutral-100/50"
+                  className="rounded-xl bg-[#FAF6F0] px-3 py-1.5 text-xs font-bold text-neutral-700 border border-[#ECE7E2]/40"
                 >
                   {item}
                 </li>
@@ -96,7 +88,7 @@ function ProfileListSection({
           )}
         </div>
       ) : (
-        <p className="mt-3 text-xs font-semibold text-neutral-light">
+        <p className="mt-3 text-xs font-semibold text-neutral-400">
           {emptyMessage}
         </p>
       )}
@@ -104,6 +96,7 @@ function ProfileListSection({
   );
 }
 function PublicProfile() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { users, matches, sendMatchRequest } = useApp() as AppContextValue;
   const { user: currentUser } = useAuth() as AuthContextValue;
@@ -139,53 +132,58 @@ function PublicProfile() {
   }
 
   return (
-    <main className="min-h-screen bg-white md:bg-[#FAF6F0] px-4 py-6 font-sans md:px-6 lg:px-8 -m-6 md:-m-8">
-      <div className="mx-auto w-full max-w-[1200px]">
-        <div className="mb-4">
+    <main className="min-h-screen bg-white md:bg-[#FAF6F0] px-4 py-6 font-sans md:px-6 lg:px-8 -m-6 md:-m-8 antialiased">
+      <div className="mx-auto w-full max-w-[1140px]">
+        <div className="mb-5">
           <Link
             to="/browse"
-            className="inline-flex items-center rounded-full bg-white border border-surface px-5 py-2 text-xs font-bold text-neutral-600 hover:bg-neutral-50 transition-colors"
+            className="inline-flex items-center rounded-2xl bg-white border border-[#ECE7E2] px-5 py-2.5 text-xs font-extrabold text-neutral-600 shadow-sm hover:bg-neutral-50 transition-colors"
           >
             ‹ Back to Browse
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start w-full">
           <div className="flex flex-col gap-6 min-w-0 w-full">
-            <section className="overflow-hidden rounded-3xl border border-surface bg-white">
-              <div className="h-32 sm:h-44 bg-gradient-to-r from-rose-400 via-orange-400 to-amber-300 relative" />
+            <section className="overflow-hidden rounded-[32px] border border-[#ECE7E2] bg-white shadow-sm">
+              <div className="h-40 md:h-44 bg-gradient-to-r from-[#EA4C61] via-[#F05B63] to-[#F7A15A]" />
 
               <div className="px-6 pb-6 relative">
-                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 -mt-14 sm:-mt-16">
-                  <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-end">
-                    <div className="flex h-24 w-24 sm:h-28 sm:w-28 items-center justify-center rounded-full border-4 border-white bg-amber-100 text-4xl overflow-hidden shadow-sm shrink-0">
-                      {profileUser.avatar ? (
-                        <span className="text-3xl">{profileUser.avatar}</span>
-                      ) : (
-                        <span className="text-xl font-bold text-amber-600">
-                          {profileUser.name.charAt(0)}
-                        </span>
-                      )}
+                {/* Layout container aligning content items vertically on smaller viewports */}
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 -mt-14 sm:-mt-16">
+                  {/* VERTICAL CONTAINER: Pushes the profile text blocks below the circular avatar frame */}
+                  <div className="flex flex-col items-center text-center sm:items-start sm:text-left gap-3 w-full sm:w-auto">
+                    <div className="relative z-10 p-1 bg-white rounded-full -mt-2">
+                      <Avatar
+                        initials={
+                          profileUser.avatar && profileUser.avatar.length <= 4
+                            ? profileUser.avatar
+                            : profileUser.name.charAt(0).toUpperCase()
+                        }
+                        size="profile"
+                      />
                     </div>
 
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-neutral-900">
+                    {/* METADATA BLOCK POSITIONED DIRECTLY UNDER THE AVATAR */}
+                    <div className="flex flex-col items-center sm:items-start mt-1">
+                      {/* Full Name & Checked Verification Dot */}
+                      <div className="flex items-center gap-1.5">
+                        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-neutral-900">
                           {profileUser.name}
                         </h1>
-                        <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#EA4C61] text-white text-[9px] font-bold shrink-0 mt-0.5">
+                        <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold shrink-0 shadow-sm">
                           ✓
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-2 flex-wrap text-xs">
+                      {/* User Metrics Row */}
+                      <div className="flex items-center justify-center sm:justify-start flex-wrap gap-2 text-xs font-bold mt-1.5">
                         <span
-                          className={`font-extrabold text-[11px] px-2 py-0.5 rounded-md uppercase ${getLevelBadgeClass(profileUser.danishLevel)}`}
+                          className={`text-[11px] px-2 py-0.5 rounded-md uppercase font-extrabold ${getLevelBadgeClass(profileUser.danishLevel)}`}
                         >
                           {getRoleLabel(profileUser.role)}
                         </span>
-                        <span className="text-emerald-500 font-bold flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{" "}
+                        <span className="text-emerald-500 flex items-center gap-1">
                           Active now
                         </span>
                         {profileUser.city && (
@@ -194,25 +192,39 @@ function PublicProfile() {
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-neutral-400 font-medium mt-1">
+
+                      {/* Average response interval tracker text */}
+                      <p className="text-[11px] text-neutral-400 font-semibold mt-1">
                         • Replies within ~1h
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <button
-                      type="button"
-                      className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-full bg-white border border-surface px-5 h-10 text-xs font-bold text-neutral-700 hover:bg-neutral-50 transition-colors"
-                    >
-                      Message
-                    </button>
+                  <div className="flex items-center gap-2 w-full sm:w-auto pt-2 sm:pt-20">
+                    {existingMatch?.status === "accepted" ? (
+                      <Link
+                        to={`/messages/${profileUser.id}`}
+                        className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-2xl bg-white border border-[#ECE7E2] px-6 h-12 text-xs font-extrabold text-neutral-700 shadow-sm hover:bg-neutral-50 transition-colors"
+                      >
+                        Message
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled
+                        title="You need to connect before sending a message"
+                        className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-2xl bg-neutral-50 border border-[#ECE7E2]/60 px-6 h-12 text-xs font-extrabold text-neutral-400 cursor-not-allowed shadow-none"
+                      >
+                        Message
+                      </button>
+                    )}
+
                     {currentUser ? (
                       <button
                         type="button"
                         onClick={handleConnect}
                         disabled={isConnectDisabled}
-                        className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-full bg-[#EA4C61] px-5 h-10 text-xs font-bold text-white hover:bg-opacity-95 disabled:bg-surface disabled:text-neutral transition-all"
+                        className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-2xl bg-[#EA4C61] px-6 h-12 text-xs font-extrabold text-white shadow-sm hover:bg-opacity-95 disabled:bg-surface disabled:text-neutral transition-all"
                       >
                         {isOwnProfile
                           ? "This is your profile"
@@ -221,7 +233,7 @@ function PublicProfile() {
                     ) : (
                       <Link
                         to="/login"
-                        className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-full bg-[#EA4C61] px-5 h-10 text-xs font-bold text-white hover:bg-opacity-95 transition-all"
+                        className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-2xl bg-[#EA4C61] px-6 h-12 text-xs font-extrabold text-white shadow-sm hover:bg-opacity-95 transition-all"
                       >
                         Log in to connect
                       </Link>
@@ -231,37 +243,48 @@ function PublicProfile() {
               </div>
             </section>
 
-            <section className="rounded-3xl border border-surface bg-white p-6 lg:p-8">
-              <h2 className="text-lg font-extrabold text-neutral-900">About</h2>
-              <p className="mt-3 text-sm font-medium leading-relaxed text-neutral-700 whitespace-pre-wrap">
+            {/* About Section Container */}
+            <section className="rounded-3xl border border-[#ECE7E2] bg-white p-6 shadow-sm">
+              <h2 className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-400">
+                About
+              </h2>
+              <p className="mt-3 text-sm font-semibold text-neutral-700 leading-relaxed whitespace-pre-wrap">
                 {profileUser.bio || "No bio added yet."}
               </p>
             </section>
 
-            <section className="rounded-3xl border border-surface bg-white p-6 lg:p-8">
-              <h2 className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-light mb-4">
+            {/* Languages Container Card */}
+            <section className="rounded-3xl border border-[#ECE7E2] bg-white p-6 shadow-sm">
+              <h2 className="text-[11px] font-extrabold uppercase tracking-wider text-neutral-400 mb-4">
                 Languages
               </h2>
 
               <div className="flex flex-col gap-4">
+                {/* Danish Metric Row */}
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <span className="bg-[#EA4C61] text-white font-extrabold text-[10px] px-1.5 py-0.5 rounded uppercase tracking-wide">
+                      <span className="w-6 h-6 rounded-md bg-[#EA4C61] text-white font-black text-[10px] flex items-center justify-center shadow-sm">
                         DK
                       </span>
-                      <span className="text-sm font-extrabold text-neutral-900">
-                        {profileUser.role?.value === "native"
-                          ? "Danish · teaches"
-                          : "Danish · learning"}
-                      </span>
+                      <div>
+                        <p className="text-xs font-bold text-neutral-800">
+                          Danish
+                        </p>
+                        <p className="text-[10px] text-neutral-400 font-medium">
+                          {profileUser.role?.value === "native"
+                            ? "teaches"
+                            : "learning"}
+                        </p>
+                      </div>
                     </div>
-                    <span className="text-xs font-bold text-[#EA4C61] bg-rose-50 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded bg-rose-50 text-[#EA4C61] uppercase">
                       {profileUser.danishLevel || "Native"}
                     </span>
                   </div>
 
-                  <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                  {/* Progress bar container */}
+                  <div className="w-full bg-neutral-100 h-2 rounded-full overflow-hidden mt-1">
                     <div
                       className="h-full bg-[#EA4C61] rounded-full transition-all duration-300"
                       style={{
@@ -283,44 +306,47 @@ function PublicProfile() {
                   </div>
                 </div>
 
-                {profileUser.nativeLanguage &&
-                  profileUser.role?.value !== "native" && (
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <span className="bg-orange-400 text-white font-extrabold text-[10px] px-1.5 py-0.5 rounded uppercase tracking-wide">
-                            {profileUser.nativeLanguage}
-                          </span>
-                          <span className="text-sm font-extrabold text-neutral-900">
-                            {profileUser.nativeLanguage === "EN"
-                              ? "English"
-                              : profileUser.nativeLanguage === "ES"
-                                ? "Spanish"
-                                : profileUser.nativeLanguage === "HI"
-                                  ? "Hindi"
-                                  : profileUser.nativeLanguage === "ZH"
-                                    ? "Chinese"
-                                    : "Native language"}{" "}
-                            · speaks
-                          </span>
-                        </div>
-                        <span className="text-xs font-bold text-orange-500 bg-orange-50 px-2 py-0.5 rounded">
-                          Native
-                        </span>
-                      </div>
-
-                      <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-orange-400 w-full rounded-full" />
+                {/* Native language or english fallback progress metric row */}
+                <div className="flex flex-col gap-2 mt-1">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="w-6 h-6 rounded-md bg-amber-500 text-white font-black text-[10px] flex items-center justify-center shadow-sm">
+                        EN
+                      </span>
+                      <div>
+                        <p className="text-xs font-bold text-neutral-800">
+                          English
+                        </p>
+                        <p className="text-[10px] text-neutral-400 font-medium">
+                          {profileUser.role?.value === "native"
+                            ? "learning"
+                            : "native"}
+                        </p>
                       </div>
                     </div>
-                  )}
+                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded bg-amber-50 text-amber-600 uppercase">
+                      {profileUser.role?.value === "native" ? "B2" : "Native"}
+                    </span>
+                  </div>
+
+                  {/* Second Progress indicator alignment block */}
+                  <div className="w-full bg-neutral-100 h-2 rounded-full overflow-hidden mt-1">
+                    <div
+                      className="h-full bg-amber-500 rounded-full transition-all duration-300"
+                      style={{
+                        width:
+                          profileUser.role?.value === "native" ? "70%" : "100%",
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             </section>
           </div>
 
           <aside className="flex flex-col gap-6 w-full lg:max-w-[360px]">
             <ProfileListSection
-              title="Topics"
+              title="Interest"
               items={profileUser.interests}
               emptyMessage="No topics added yet."
             />

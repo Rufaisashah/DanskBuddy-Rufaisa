@@ -24,9 +24,7 @@ export default function FeedPage() {
     <div className="flex flex-col bg-white md:bg-[#FAF6F0] min-h-full -m-6 md:-m-8">
       <TopBar onSearch={setSearch} />
 
-      {/* FIXED: Sets a stable wrapper layout with uniform padding tracks */}
       <div className="w-full max-w-[1240px] mx-auto px-4 md:px-6 md:pr-6 mt-4 md:mt-6">
-        {/* FIXED: Replaced standard flex rows with a balanced grid to guarantee equal spacing tracks */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start w-full">
           {/* Feed column */}
           <div className="flex flex-col flex-1 min-w-0 px-0 pb-20 gap-4">
@@ -42,7 +40,6 @@ export default function FeedPage() {
             )}
           </div>
 
-          {/* Right panel — sticky */}
           <aside className="hidden lg:block w-full">
             <div className="sticky top-[100px] flex flex-col gap-4 w-full">
               <RightPanel />

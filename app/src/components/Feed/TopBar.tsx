@@ -51,7 +51,7 @@ export default function TopBar({ onSearch }: Props) {
 
   return (
     <header className="left-0 right-0 h-[72px] lg:h-[90px] flex items-center justify-between px-4 lg:px-6 bg-white border-b border-transparent md:border-[#ebe5dd] z-50">
-      <h1 className="text-xl lg:text-3xl font-extrabold text-foreground m-0 tracking-tight">
+      <h1 className="mt-2 lg:mt-0 text-xl lg:text-3xl font-bold text-foreground m-0 tracking-tight">
         Fællesskab
       </h1>
 
@@ -64,7 +64,15 @@ export default function TopBar({ onSearch }: Props) {
             className="flex-1 border-none outline-none bg-transparent font-medium text-sm text-foreground placeholder:text-neutral-400"
           />
         </div>
-
+        {/* Mobile Search */}
+        <button
+          onClick={() => {
+            // Optional: open search
+          }}
+          className="flex lg:hidden w-10 h-10 rounded-full bg-[#FAF6F0] border border-neutral-100 items-center justify-center hover:bg-neutral-100/50 transition-colors"
+        >
+          <Search size={18} className="text-neutral-700" />
+        </button>
         {/* Bell */}
         <div className="relative" ref={ref}>
           <button
