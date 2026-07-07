@@ -50,12 +50,21 @@ export default function MatchCard({ match, onAction }) {
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <div className="relative flex-none">
-            <div
-              className="w-10 h-10 rounded-full text-white flex items-center justify-center font-bold"
-              style={{ backgroundColor: colorFor(otherUser.id) }}
-            >
-              {initials(otherUser.name)}
-            </div>
+            {otherUser.avatar?.startsWith("data:image") ? (
+              <img
+                src={otherUser.avatar}
+                alt=""
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            ) : (
+              <div
+                className="w-10 h-10 rounded-full text-white flex items-center justify-center font-bold"
+                style={{ backgroundColor: colorFor(otherUser.id) }}
+              >
+                {initials(otherUser.name)}
+              </div>
+            )}
+
             {status === "accepted" && (
               <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#34C77B] border-2 border-white" />
             )}

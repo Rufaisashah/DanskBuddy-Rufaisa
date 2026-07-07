@@ -159,7 +159,13 @@ function PublicProfile() {
                 <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 -mt-14 sm:-mt-16">
                   <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-end">
                     <div className="flex h-24 w-24 sm:h-28 sm:w-28 items-center justify-center rounded-full border-4 border-white bg-amber-100 text-4xl overflow-hidden shadow-sm shrink-0">
-                      {profileUser.avatar ? (
+                      {profileUser.avatar?.startsWith("data:image") ? (
+                        <img
+                          src={profileUser.avatar}
+                          alt="Brugeravatar"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : profileUser.avatar ? (
                         <span className="text-3xl">{profileUser.avatar}</span>
                       ) : (
                         <span className="text-xl font-bold text-amber-600">

@@ -6,7 +6,6 @@ import PostCard from "./PostCard";
 import RightPanel from "./RightPanel";
 import type { Post } from "./Post";
 
-
 export default function FeedPage() {
   const { posts } = useApp() as { posts: Post[] };
   const [search, setSearch] = useState("");

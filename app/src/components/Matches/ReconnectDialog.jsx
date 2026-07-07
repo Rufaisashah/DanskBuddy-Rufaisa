@@ -37,7 +37,8 @@ export default function ReconnectDialog({ name, onCancel, onConfirm }) {
 
         {/* 2. Translated Body Paragraph */}
         <p className="mt-[8px] text-[13px] font-medium leading-[1.5] text-[#7C756B]">
-          Du har tidligere afvist dette match. Hvis du sender en anmodning igen, kan {name} acceptere og starte en chat.
+          Du har tidligere afvist dette match. Hvis du sender en anmodning igen,
+          kan {name} acceptere og starte en chat.
         </p>
 
         <div className="mt-[18px] flex gap-[9px]">
@@ -48,7 +49,7 @@ export default function ReconnectDialog({ name, onCancel, onConfirm }) {
           >
             Annuller
           </button>
-          
+
           {/* 4. Translated Confirm Button */}
           <button
             onClick={onConfirm}
