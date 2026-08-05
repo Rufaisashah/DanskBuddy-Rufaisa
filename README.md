@@ -10,7 +10,7 @@ A web application connecting people learning Danish with native speakers for rea
 
 ## Live Demo
 
-🔗 **[danskbuddy.vercel.app](https://danskbuddy.vercel.app)**
+🔗 **[danskbuddy.vercel.app](https://dansk-buddy.vercel.app/)**
 
 > Demo account: `demo@test.com` / `password123`
 
