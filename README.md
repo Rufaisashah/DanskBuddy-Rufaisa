@@ -188,8 +188,8 @@ Built by three HackYourFuture Denmark trainees:
 
 | Member | Role | Features |
 |---|---|---|
-| **Rufaisa Shah** | Frontend | Auth, Profile, Browse, HomePage |
-| **Iryna** | Frontend | Context, Layout, Matches, Routes, Deployment |
+| **Rufaisa shah** | Frontend | Context, Layout, Matches, Routes,Translation|
+| **Iryna** | Frontend | Auth, Profile, Browse, HomePage |
 | **Jyoti** | Frontend | Seed data, Shared components, Messages, Feed |
 
 ---
