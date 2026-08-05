@@ -184,7 +184,7 @@ On first visit, 15 seed profiles are loaded automatically so the Browse page is 
 
 ## Team
 
-Built by three HackYourFuture Denmark students:
+Built by three HackYourFuture Denmark trainees:
 
 | Member | Role | Features |
 |---|---|---|
