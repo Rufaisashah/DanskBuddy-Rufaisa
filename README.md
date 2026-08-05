@@ -249,15 +249,4 @@ style: mobile responsive matches page
 - Map view to find partners near you
 - Mobile app with React Native
 
----
 
-## Weekly Sprints
-
-| Week | Focus | Done |
-|---|---|---|
-| 1 | Foundation — auth, context, layout, seed data, matches, messages | ✅ |
-| 2 | Polish — browse, feed, profile, deployment, mobile responsive | ✅ |
-
----
-
-*Built at HackYourFuture Denmark, 2026* -->
