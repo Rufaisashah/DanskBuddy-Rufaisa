@@ -233,9 +233,8 @@ style: mobile responsive matches page
 ## Known Limitations
 
 - **localStorage only** — data is stored in the browser. Clearing browser data removes all accounts and messages. A production version would use PostgreSQL.
-- **No password hashing** — passwords are stored in plain text in localStorage. Not suitable for production.
 - **Single device** — since data is browser-based, accounts don't transfer between devices or browsers.
-- **No real notifications** — pending match count refreshes on page load, not in real time.
+
 
 ---
 
